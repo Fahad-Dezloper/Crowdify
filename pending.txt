@@ -4,3 +4,12 @@
 //should contain youtube or spotify link only using zod - in stream/route.ts
 
 todo: replace this with id everywhere // downvote/route.ts
+
+
+// currently hardcoded page in dashboard (resolve this)
+                creatorId: "e3432625-e842-4867-9cf6-be61868ec6ea",
+
+                 docker run -p 5432:5432 -e POSTGRES_PASSWORD=randompassword postgresD\
+
+                 // store details in cookies so dont have to fetch from db again and again
+                 route.ts/next

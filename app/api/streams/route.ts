@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import {z} from 'zod'
 // @ts-ignore
 import youtubesearchapi from 'youtube-search-api'
+import { YT_REGEX } from "@/lib/utils";
+import { getServerSession } from "next-auth";
 
-const YT_REGEX = /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/;
 const CreateStreamSchema = z.object({
     creatorId: z.string(),
     url: z.string() //should contain youtube or spotify link only
@@ -56,6 +57,22 @@ export async function POST(req: NextRequest){
 
 export async function GET(req: NextRequest){
     const creatorId = req.nextUrl.searchParams.get("creatorId");
+    const session = await getServerSession();
+
+    const user = await prismaClient.user.findFirst({
+        where: {
+            email: session?.user?.email ?? ""
+        }
+    })
+
+    if(!creatorId){
+        return NextResponse.json({
+            message: "Error"
+        }, {
+            status: 411
+        })
+    }
+    
     const streams = await prismaClient.stream.findMany({
         where: {
             userId: creatorId ?? ""
@@ -65,6 +82,11 @@ export async function GET(req: NextRequest){
                 select: {
                     upvotes: true
                 }
+            },
+            upvotes: {
+                where: {
+                    userId: user?.id
+                }
             }
         }
     })
@@ -73,7 +95,8 @@ export async function GET(req: NextRequest){
     return NextResponse.json({
         streams: streams.map(({_count, ...rest}) => ({
             ...rest,
-            upvotes: _count.upvotes
+            upvotes: _count.upvotes,
+            haveUpvoted: rest.upvotes.length ? true : false
         }))
     })
 }
