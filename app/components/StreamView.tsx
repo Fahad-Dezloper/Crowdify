@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import axios from "axios";
-import { ChevronDown, ChevronUp} from "lucide-react";
+import { ChevronDown, ChevronUp, Play} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react"
 import {z} from 'zod'
@@ -26,23 +26,33 @@ interface Video {
     "upvotes": number,
     "haveUpvoted": boolean
 }
-const StreamView = ({creatorId}: {creatorId: string}) => {
+const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVideo:boolean}) => {
     const [arr, setArr] = useState([])
     const [liked, setLiked] = useState(false);
     // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
+    const [currentVideo, setCurrentVideo] = useState();
+    const [playNextLoader, setPlayNextLoader] = useState(false);
 
     async function refreshStreams(){
-        const res = await axios.get(`/api/streams/?creatorId=${creatorId}`);
-        console.log("here response", res.data.streams);
-        setArr(res.data.streams)
+        const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
+        const json = await res.json();
+        setArr(json.streams.sort((a, b) => a.upvotes < b.upvotes ? 1 : -1));
+        setCurrentVideo(video => {
+            if(video?.id === json.activeStream?.stream?.id){
+                return video;
+            }
+            return json.activeStream.stream
+        });
+
+        // console.log("here response", res.data.streams);
     }
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         refreshStreams();
         const interval = setInterval(() => {
-
+            refreshStreams();
         }, REFRESH_INTERVAL_MS)
     },[])   
 
@@ -71,8 +81,25 @@ const StreamView = ({creatorId}: {creatorId: string}) => {
                 url: inputLink
             })
         });
-        setArr([...prev, await res.json()])
+        // setArr([...prev, await res.json()])
         setInputLink('');
+    }
+
+    const PlayNext = async () => {
+        if(arr.length > 0){
+            try {
+                setPlayNextLoader(true);
+                const data = await fetch('/api/streams/next', {
+                    method: "GET",
+                })
+                const json = await data.json();
+                setCurrentVideo(json.stream);
+            } catch (error) {
+                console.log(error);
+            } finally{
+                setPlayNextLoader(false)
+            }
+        }
     }
 
     return (
@@ -87,7 +114,29 @@ const StreamView = ({creatorId}: {creatorId: string}) => {
                 <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]}/>
             </div>
         </div>
-    )}       
+    )}
+
+    {/* currnet video */}
+    <div className="">
+        <h1 className="text-white font-semibold text-2xl text-center">Now Playing</h1>
+        {currentVideo ? (
+        <div>
+            {playVideo ? <>
+            {/* @ts-ignore */}
+                {/* <div className='w-full' /> */}
+                <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
+            </> : <>
+            <img 
+                src={currentVideo.bigImg} 
+                className="w-full h-72 object-cover rounded"
+            />
+            <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
+        </>}
+    </div>) : (
+        <p className="text-center py-8 text-gray-400">No video playing</p>
+    )}
+    </div>
+    {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>}       
 {/* Queue Box */}
             <div className="bg-white p-4 w-fit flex flex-col gap-4">
                 {arr.map((item: Video, index) => (
@@ -104,11 +153,6 @@ const StreamView = ({creatorId}: {creatorId: string}) => {
                         </div>
                     </div>
                 ))}
-            </div>
-
-{/* Queue */}
-            <div>
-
             </div>
         </div>
     )

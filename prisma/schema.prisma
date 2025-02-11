@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,42 +8,47 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  provider  Provider
-  streams   Stream[]
-  upvotes   Upvote[]
+  id       String   @id @default(uuid())
+  email    String   @unique
+  provider Provider
+  streams  Stream[]
+  upvotes  Upvote[]
 }
 
 model Stream {
-  id    String  @id @default(uuid())
-  type   StreamType
-  active  Boolean   @default(true)
-  userId    String
-  url       String
+  id            String         @id @default(uuid())
+  type          StreamType
+  active        Boolean        @default(true)
+  played        Boolean        @default(false)
+  playedTs      DateTime       @default(now())
+  createdAt     DateTime      @default(now())
+  userId        String  
   extractedId   String
-  title       String   @default("")
-  smallImg    String  @default("")
-  bigImg      String  @default("")
-  upvotes   Upvote[]
-  user    User  @relation(fields: [userId], references: [id])
+  url           String
+  bigImg        String         @default("")
+  smallImg      String         @default("")
+  title         String         @default("")
   currentStream CurrentStream?
+  user          User           @relation(fields: [userId], references: [id])
+  upvotes       Upvote[]
 }
 
 model CurrentStream {
-  userId  String  @id
-  streamId String?  @unique
-  stream  Stream? @relation(fields: [streamId], references: [id])
+  userId   String  @id
+  streamId String? @unique
+  stream   Stream? @relation(fields: [streamId], references: [id])
 }
 
 model Upvote {
-  id    String    @id @default(uuid())
-  userId  String
-  streamId  String
-  user  User  @relation(fields: [userId], references: [id])
-  stream    Stream  @relation(fields: [streamId], references: [id])
+  id       String @id @default(uuid())
+  userId   String
+  streamId String
+  stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id])
+
   @@unique([userId, streamId])
 }
+
 enum StreamType {
   Spotify
   Youtube

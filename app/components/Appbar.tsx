@@ -1,5 +1,5 @@
 "use client"
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function Appbar(){
     const session = useSession();
@@ -8,7 +8,7 @@ export default function Appbar(){
             <div className="w-full flex justify-between">
                 <div>Crowdify</div>
                 <div className="">
-                    {session.data?.user ? <button className="" onClick={() => signIn()}>Signin</button> : <button className="" onClick={() => signIn()}>Logout</button>}
+                    {session.data?.user ? <button className="" onClick={() => signOut()}>Logout</button> : <button className="" onClick={() => signIn()}>Signin</button>}
                 </div>
             </div>
         </div>
