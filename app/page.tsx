@@ -1,12 +1,11 @@
-import Appbar from "./components/Appbar";
 import Redirect from "./components/Redirect";
+import LandingPage from "./components/LandingPage";
 
 export default function Home() {
   return (
-    <div className="w-screen h-screen overflow-hidden p-6">
-      <Appbar />
+    <div className="w-fit h-fit flex flex-col items-center justify-center overflow-hidden">
       <Redirect />
-      <div className="w-full h-full flex items-center justify-center text-[6vw] text-white">Crowdify</div>
+      <LandingPage />
     </div>
   ); 
 }

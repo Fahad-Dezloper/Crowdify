@@ -70,3 +70,14 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+body{
+  overflow-x: hidden;
+  /* background: radial-gradient(circle, hsla(230, 32%, 14%, 1) 0%, hsla(232, 10%, 31%, 1) 100%); */
+  /* background: radial-gradient(circle, hsla(230, 32%, 14%, 1) 0%, hsla(231, 15%, 27%, 1) 100%); */
+  background: radial-gradient(circle, hsla(230, 32%, 14%, 1) 0%, hsla(231, 35%, 22%, 1) 100%);
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}

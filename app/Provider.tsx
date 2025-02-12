@@ -1,10 +1,10 @@
 "use client"
 import { SessionProvider } from "next-auth/react"
-import Appbar from "./components/Appbar"
+import Navbar from "./components/Navbar"
 
 export function Provider({children}: {children: React.ReactNode}){
     return <SessionProvider>
-        <Appbar />
+        <Navbar />
         {children}
     </SessionProvider>
 }
