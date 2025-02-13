@@ -5,6 +5,7 @@ import { motion } from "motion/react"
 import { StickyScroll } from '@/components/ui/sticky-scroll-reveal'
 import { StickyScrollRevealDemo } from './StickyScrollContent'
 import Link from 'next/link'
+import Navbar from './Navbar'
 
 
 const LandingPage = () => {
@@ -82,6 +83,7 @@ const LandingPage = () => {
   return (
     <>
     {/* section 1 */}
+    <Navbar />
     <div className='flex flex-col w-screen h-screen fixed top-0 z-10 items-center justify-center'>
     <div className="w-fit h-fit font-funnel flex items-center justify-center leading-none text-[9vw] text-white">
       <span>Cr</span> 

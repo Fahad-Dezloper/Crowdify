@@ -3,13 +3,14 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import axios from "axios";
-import { ChevronDown, ChevronUp, Play} from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, Link2, Play} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react"
 import {z} from 'zod'
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import { YT_REGEX } from "@/lib/utils";
+import Image from "next/image";
 
 const REFRESH_INTERVAL_MS = 10 * 1000;
 
@@ -73,6 +74,7 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        alert("clicked")
         const res = await fetch("/api/streams/", {
             method: "POST",
             body: JSON.stringify({
@@ -103,57 +105,112 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
     }
 
     return (
-        <div className="w-screen h-screen bg-gray-900 flex flex-col items-center justify-center">
-            <div className="flex gap-4">
-                <Input placeholder="Add Song.." className="text-white" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
+        <div className="w-screen h-screen  flex bg-[#101216] justify-between items-center">
+            {/* Last Part */}
+            <div className="w-[30vw] flex flex-col bg-white h-full overflow-y-auto px-4">
+                <h1 className="font-funnel text-4xl text-center py-8 font-semibold">Crowdify</h1>
+                <div className="flex flex-col gap-2">
+                <div className="flex gap-3">
+                <Input placeholder="Add Song..." className="text-black border" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
                 <Button onClick={(e) => handleSubmit(e)}>Add to Queue</Button>
+                </div>
+                {inputLink && inputLink.match(YT_REGEX) ? (
+                <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden">
+                    <div className="w-full h-[23vh]">
+                        <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]}/>
+                    </div>
+                </div>
+            ) : <div className="bg-[#101216] border-gray-800 rounded-b-xl overflow-hidden h-[23vh] text-white text-2xl flex items-center justify-center w-full font-funnel">No Preview Available</div>}
             </div>
-    {inputLink && inputLink.match(YT_REGEX) && (
-        <div className="bg-gray-900 border-gray-800 w-[70vh] h-[70vw] overflow-hidden rounded-2xl">
-            <div className="p-4">
-                <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]}/>
             </div>
-        </div>
-    )}
 
-    {/* currnet video */}
-    <div className="">
-        <h1 className="text-white font-semibold text-2xl text-center">Now Playing</h1>
-        {currentVideo ? (
-        <div>
-            {playVideo ? <>
-            {/* @ts-ignore */}
-                {/* <div className='w-full' /> */}
-                <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
-            </> : <>
-            <img 
-                src={currentVideo.bigImg} 
-                className="w-full h-72 object-cover rounded"
-            />
-            <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
-        </>}
-    </div>) : (
-        <p className="text-center py-8 text-gray-400">No video playing</p>
-    )}
-    </div>
-    {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>}       
-{/* Queue Box */}
-            <div className="bg-white p-4 w-fit flex flex-col gap-4">
-                {arr.map((item: Video, index) => (
-                    <div key={index} className="flex gap-4">
-                        <img src={item.bigImg} alt="" className="w-72 rounded-xl h-40 object-cover" />
-                        <div className="flex flex-col h-full justify-between">
-                        <h1>{item.title}</h1>
-                        <div className="flex w-full justify-between">
-                            <Button onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="flex gap-6 items-center text-white">
-                            {item.haveUpvoted ? <div className="flex gap-6"><ChevronDown />{item.upvotes}</div> : <div className="flex gap-6"><ChevronUp className={`${liked && "text-blue-800"}`} />{item.upvotes}</div>} 
-                            </Button>
-                            <Link href={item.url}>here is the link</Link>
-                        </div>
+            <div className="w-full h-full flex flex-col">
+
+                <div className="w-full h-[20vh] flex justify-between items-center px-8">
+                    <div className="flex font-funnel text-white text-2xl items-center">
+                        <h1 className="font-semibold">Home</h1>
+                        <span><ChevronRight /></span>
+                        <span className="text-[#808080]">Dashboard</span>
+                    </div>
+                    <div className="text-xl font-funnel text-white">User Details</div>
+                </div>
+
+
+                <div className="w-full min-h-[40vh] bg-red-400">
+                    Other People spaces probably
+                </div>
+
+
+
+                <div className="flex w-full h-full">
+                    <div className="w-full h-full bg-yellow-300"></div>
+                    <div className="min-w-[28vw] p-6 h-full">
+                        <div className="w-full h-full bg-red-300 rounded-2xl" >
+                        {currentVideo ? (
+                    <div>
+                        {playVideo ? <>
+                            <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
+                                        </> : <>
+                                        <img 
+                                            src={currentVideo.bigImg} 
+                                            className="w-full h-72 object-cover rounded"
+                                        />
+                                        <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
+                                    </>}
+                                </div>) : (
+                                    <p className="text-center py-8 text-gray-400">No video playing</p>
+                                )}
+                                {/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>} */}
+                            </div>
                         </div>
                     </div>
-                ))}
             </div>
+
+        {/* currnet video and preview*/}
+            {/* 
+            <div className="">
+                <h1 className="text-white font-semibold text-2xl text-center">Now Playing</h1>
+                {currentVideo ? (
+                <div>
+                    {playVideo ? <>
+                        <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
+                    </> : <>
+                    <img 
+                        src={currentVideo.bigImg} 
+                        className="w-full h-72 object-cover rounded"
+                    />
+                    <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
+                </>}
+            </div>) : (
+                <p className="text-center py-8 text-gray-400">No video playing</p>
+            )}
+            </div> */}
+
+    {/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>}       */}
+    
+     
+{/* Queue Box */}
+            {/* <div className="px-6 py-4 w-[30vw] h-full border-r-2 backdrop-blur-sm overflow-y-auto flex flex-col">
+                <h1 className="font-funnel text-3xl text-white mb-7">Upcoming</h1>
+                {arr.map((item: Video, index) => (
+                    <div key={index} className="flex gap-4 hover:bg-gray-500 p-2 items-center justify-between text-white">
+                        <div className="flex items-center gap-2">
+                            <div className="max-w-[8vw] max-h-[10vh] rounded-xl overflow-hidden">
+                            <img src={item.bigImg} alt="Preview Image" className="w-full h-full object-cover" />
+                            </div>
+                            <h1 className="text-[0.65rem] font-semibold leading-none">{item.title}</h1>
+                        </div>
+
+                        <div className="flex bg-black rounded-2xl py-2 px-3 text-sm items-center">
+                            <button onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="flex gap-4 items-center text-white">
+                            {item.haveUpvoted ? <div className="flex gap-6"><ChevronDown size={18} /></div> : <div className="flex gap-6"><ChevronUp  size={18} className={`${liked && "text-blue-800"}`} /></div>}{item.upvotes} 
+                            </button>
+                            <Link href={item.url}><Link2 size={18} /></Link>
+                        </div>
+
+                    </div>
+                ))}
+            </div> */}
         </div>
     )
 }

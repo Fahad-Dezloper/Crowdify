@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar"
 
 export function Provider({children}: {children: React.ReactNode}){
     return <SessionProvider>
-        <Navbar />
         {children}
     </SessionProvider>
 }

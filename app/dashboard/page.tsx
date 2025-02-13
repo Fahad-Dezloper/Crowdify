@@ -7,8 +7,8 @@ const Dashboard = () => {
 
     return (
         // 91920376-152c-4cb3-ab40-875ddc4abd93
-       <div>
-        <StreamView creatorId="4a00e8ce-2787-45a1-a7d4-cf629745a4d5" playVideo={true}/>
+       <div className="w-full h-full">
+        <StreamView creatorId="414f156f-4d9a-44e5-8cb7-ccc10c5ea9e7" playVideo={true}/>
        </div>
     )
 }
