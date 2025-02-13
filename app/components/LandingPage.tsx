@@ -1,9 +1,10 @@
 "use client"
-import { AudioLines, Headphones, PauseCircle, PlayCircle } from 'lucide-react'
+import { AudioLines, Headphones, PauseCircle, PlayCircle, XIcon } from 'lucide-react'
 import React, { useRef, useState } from 'react'
 import { motion } from "motion/react"
 import { StickyScroll } from '@/components/ui/sticky-scroll-reveal'
 import { StickyScrollRevealDemo } from './StickyScrollContent'
+import Link from 'next/link'
 
 
 const LandingPage = () => {
@@ -179,8 +180,22 @@ const LandingPage = () => {
     </div>
 
     {/* section 3 */}
-    <div className='w-screen h-screen z-30 bg-black'>
+    <div className='w-screen h-fit z-30 bg-black'>
         <StickyScrollRevealDemo />
+    </div>
+
+    {/* section 4 */}
+    <div className='w-screen h-screen z-30 bg-black text-6xl font-funnel flex items-center justify-center text-white'>
+      Reviews
+    </div>
+
+    {/* section 5 */}
+    <div className='w-screen h-fit py-9 px-6 bg-black z-30'>
+      <div className='w-full h-full flex justify-between items-center px-16 py-8 bg-[#b3b3b3] rounded-2xl'>
+        <h1 className="font-semibold font-funnel">crowdify@gmail.com <br />
+        © 2025 India. All rights reserved.</h1>
+        <Link href="https://x.com/l_fahadkhan_l" className="flex gap-1 font-funnel font-semibold hover:underline"><span>Build with 💙 by</span>𝕏</Link>
+      </div>
     </div>
     </>
   )

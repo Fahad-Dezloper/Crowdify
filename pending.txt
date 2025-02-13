@@ -13,3 +13,6 @@ todo: replace this with id everywhere // downvote/route.ts
 
                  // store details in cookies so dont have to fetch from db again and again
                  route.ts/next
+
+
+// add extention and dynamic island on website tabs make it the best...

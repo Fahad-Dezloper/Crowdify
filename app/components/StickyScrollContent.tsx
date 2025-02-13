@@ -2,51 +2,47 @@
 import React from "react";
 // import { StickyScroll } from "../ui/sticky-scroll-reveal";
 import Image from "next/image";
+import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
+import RoomBox from "@/components/RoomBox";
 
 const content = [
   {
-    title: "Collaborative Editing",
+    title: "Create the Room",
     description:
-      "Work together in real time with your team, clients, and stakeholders. Collaborate on documents, share ideas, and make decisions quickly. With our platform, you can streamline your workflow and increase productivity.",
+      "Just Create the Fucking Room...",
     content: (
-      <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))] flex items-center justify-center text-white">
-        Collaborative Editing
+      <div className="h-full w-full scale-150 flex items-center justify-center text-white">
+        <RoomBox />
       </div>
     ),
   },
   {
-    title: "Real time changes",
+    title: "Automate F***king Everything",
     description:
-      "See changes as they happen. With our platform, you can track every modification in real time. No more confusion about the latest version of your project. Say goodbye to the chaos of version control and embrace the simplicity of real-time updates.",
+      "--> Real Time Upvoting --> Automatically playing the most upvoted song",
     content: (
       <div className="h-full w-full  flex items-center justify-center text-white">
-        <Image
-          src="/linear.webp"
-          width={300}
-          height={300}
-          className="h-full w-full object-cover"
-          alt="linear board demo"
-        />
+        Add Dashboard video
       </div>
     ),
   },
   {
-    title: "Version control",
+    title: "Spotify for Browser",
     description:
-      "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version of your project, eliminating the need for constant manual updates. Stay in the loop, keep your team aligned, and maintain the flow of your work without any interruptions.",
+      "Don't wanna visit website again and again just download the extention we will give you every thing on your browser itself",
     content: (
       <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--orange-500),var(--yellow-500))] flex items-center justify-center text-white">
-        Version control
+        Add Extention Video
       </div>
     ),
   },
   {
-    title: "Running out of content",
+    title: "Dynamic Island",
     description:
-      "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version of your project, eliminating the need for constant manual updates. Stay in the loop, keep your team aligned, and maintain the flow of your work without any interruptions.",
+      "I know you couldn't have guessed right, Damn fucking dynamic island on you system itself",
     content: (
-      <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))] flex items-center justify-center text-white">
-        Running out of content
+      <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--orange-500),var(--yellow-500))] flex items-center justify-center text-white">
+        Add Interactive Dynamic Island
       </div>
     ),
   },

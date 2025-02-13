@@ -81,3 +81,11 @@ body{
 body::-webkit-scrollbar {
   display: none;
 }
+
+.primaryGradient{
+  background: radial-gradient(circle, hsla(230, 32%, 14%, 1) 0%, hsla(231, 35%, 22%, 1) 100%);
+}
+
+.scrolll::-webkit-scrollbar {
+  display: none;
+}
