@@ -3,14 +3,18 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import axios from "axios";
-import { ChevronDown, ChevronRight, ChevronUp, Link2, Play} from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Link2, Play} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react"
 import {z} from 'zod'
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
-import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import { YT_REGEX } from "@/lib/utils";
 import Image from "next/image";
+import MusicPlayer from "./MusicPlayer";
+import Queue from "./Queue";
+import LeftSidebar from "./leftSidebar";
+import TopBar from "./Topbar";
+import ChatBot from "./ChatBot";
 
 const REFRESH_INTERVAL_MS = 10 * 1000;
 
@@ -35,6 +39,7 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
     const [currentVideo, setCurrentVideo] = useState();
     const [playNextLoader, setPlayNextLoader] = useState(false);
 
+    console.log("i am arr", arr);
     async function refreshStreams(){
         const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
         const json = await res.json();
@@ -105,62 +110,38 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
     }
 
     return (
-        <div className="w-screen h-screen  flex bg-[#101216] justify-between items-center">
-            {/* Last Part */}
-            <div className="w-[30vw] flex flex-col bg-white h-full overflow-y-auto px-4">
-                <h1 className="font-funnel text-4xl text-center py-8 font-semibold">Crowdify</h1>
-                <div className="flex flex-col gap-2">
-                <div className="flex gap-3">
-                <Input placeholder="Add Song..." className="text-black border" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
-                <Button onClick={(e) => handleSubmit(e)}>Add to Queue</Button>
-                </div>
-                {inputLink && inputLink.match(YT_REGEX) ? (
-                <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden">
-                    <div className="w-full h-[23vh]">
-                        <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]}/>
-                    </div>
-                </div>
-            ) : <div className="bg-[#101216] border-gray-800 rounded-b-xl overflow-hidden h-[23vh] text-white text-2xl flex items-center justify-center w-full font-funnel">No Preview Available</div>}
-            </div>
-            </div>
+        <div className="w-screen h-screen flex bg-[#101216] justify-between items-center">
 
-            <div className="w-full h-full flex flex-col">
+            <LeftSidebar handleSubmit={handleSubmit} inputLink={inputLink} YT_REGEX={YT_REGEX} setInputLink={setInputLink} />
 
-                <div className="w-full h-[20vh] flex justify-between items-center px-8">
-                    <div className="flex font-funnel text-white text-2xl items-center">
-                        <h1 className="font-semibold">Home</h1>
-                        <span><ChevronRight /></span>
-                        <span className="text-[#808080]">Dashboard</span>
-                    </div>
-                    <div className="text-xl font-funnel text-white">User Details</div>
-                </div>
+            <div className="w-full h-full flex overflow-hidden flex-col">
+                <TopBar />
 
 
-                <div className="w-full min-h-[40vh] bg-red-400">
-                    Other People spaces probably
+                <div className="w-full h-fit flex items-center scrolll justify-center px-6 pt-1 pb-2">
+                    <Queue queue={arr} handleVote={handleVote} liked={liked}/>
                 </div>
 
 
 
-                <div className="flex w-full h-full">
-                    <div className="w-full h-full bg-yellow-300"></div>
-                    <div className="min-w-[28vw] p-6 h-full">
-                        <div className="w-full h-full bg-red-300 rounded-2xl" >
-                        {currentVideo ? (
-                    <div>
-                        {playVideo ? <>
-                            <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
-                                        </> : <>
-                                        <img 
-                                            src={currentVideo.bigImg} 
-                                            className="w-full h-72 object-cover rounded"
-                                        />
-                                        <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
-                                    </>}
-                                </div>) : (
-                                    <p className="text-center py-8 text-gray-400">No video playing</p>
-                                )}
-                                {/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>} */}
+
+                <div className="flex w-full h-full overflow-hidden px-6 py-5 gap-4">            
+                    <ChatBot />
+
+                    <div className="w-[40vw] h-full">
+                        <div className="w-full h-full bg-[#e6e6e6] rounded-2xl p-5 px-8" >
+                            {currentVideo ? (
+                                <MusicPlayer video={currentVideo} onClick={PlayNext} />
+                                        ) : 
+                                        (
+                                        <div className="w-full h-full bg-gray-400 flex flex-col rounded-2xl">
+                                            <div className="w-full h-full bg-blue-400">
+                                            </div>
+                                            <div className="w-full h-full bg-yellow-400">
+                                                    <Button onClick={PlayNext}>Play Next</Button>
+                                            </div>
+                                        </div>
+                                    )}
                             </div>
                         </div>
                     </div>
