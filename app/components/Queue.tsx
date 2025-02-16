@@ -2,7 +2,7 @@ import { ChartNoAxesColumn, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, L
 import Link from "next/link"
 
 const Queue = ({queue, handleVote, liked}) => {
-    console.log("here we have queue", queue);
+    // console.log("here we have queue", queue);
     function concatenateWithinLimit(text) {
         let result = "";
         let count = 0;
@@ -32,9 +32,9 @@ const Queue = ({queue, handleVote, liked}) => {
             <div className="flex overflow-auto w-full gap-3 scrolll">
             {queue.length > 0 ? <>
                 {queue.map((item, index) => (
-                    <div key={index} className="flex flex-col gap-4 border rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between ">
+                    <div key={index} className="flex flex-col gap-4 border rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between">
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-[10vw] h-[13vh] rounded-xl overflow-hidden">
+                            <div className="min-w-[10vw] h-[13vh] rounded-xl overflow-hidden">
                             <img src={item.bigImg} alt="Preview Image" className="w-full h-full object-cover" />
                             </div>
                             <h1 className="text-xs font-semibold leading-none text-center">{concatenateWithinLimit(item.title)}</h1>

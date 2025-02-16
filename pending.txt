@@ -16,3 +16,10 @@ todo: replace this with id everywhere // downvote/route.ts
 
 
 // add extention and dynamic island on website tabs make it the best...
+
+// Implement Websocket for real time update on voting and chat in dashboard. implement room functionality so other people can join room. get it done phuckerrrr
+// implement song search functionality for youtube
+// work on extention and Dynamic island
+
+
+{/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>} */}

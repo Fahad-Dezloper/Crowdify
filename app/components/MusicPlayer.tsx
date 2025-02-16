@@ -36,7 +36,7 @@ const MusicPlayer = ({video, onClick}) => {
     playerRef.current?.seekTo(newTime)
   }
 
-    console.log("here dets", video);
+    // console.log("here dets", video);
     return (
         <div className="flex flex-col gap-4 w-full h-full">
             <div className="flex flex-col justify-between h-full">

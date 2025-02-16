@@ -39,7 +39,7 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
     const [currentVideo, setCurrentVideo] = useState();
     const [playNextLoader, setPlayNextLoader] = useState(false);
 
-    console.log("i am arr", arr);
+    // console.log("i am arr", arr);
     async function refreshStreams(){
         const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
         const json = await res.json();
@@ -53,7 +53,6 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
 
         // console.log("here response", res.data.streams);
     }
-
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         refreshStreams();
@@ -83,7 +82,6 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
         const res = await fetch("/api/streams/", {
             method: "POST",
             body: JSON.stringify({
-                // currently hardcoded
                 creatorId: creatorId,
                 url: inputLink
             })

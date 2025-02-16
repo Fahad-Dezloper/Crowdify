@@ -99,7 +99,7 @@ export async function GET(req: NextRequest){
         }
     })])
 
-    console.log("here streams", streams);
+    // console.log("here streams", streams);
     return NextResponse.json({
         streams: streams.map(({_count, ...rest}) => ({
             ...rest,
