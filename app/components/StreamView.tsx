@@ -113,7 +113,7 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
             <LeftSidebar handleSubmit={handleSubmit} inputLink={inputLink} YT_REGEX={YT_REGEX} setInputLink={setInputLink} />
 
             <div className="w-full h-full flex overflow-hidden flex-col">
-                <TopBar />
+                <TopBar userId={creatorId} />
 
 
                 <div className="w-full h-fit flex items-center scrolll justify-center px-6 pt-1 pb-2">

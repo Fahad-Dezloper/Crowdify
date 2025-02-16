@@ -17,7 +17,7 @@ const Dashboard = () => {
         }, [status, session]);
 
         async function getUser() {
-            console.log("calling function")
+            // console.log("calling function")
             try {
                 const res = await axios.get("/api/user/fetchUser");
                 console.log("Here is the userId:", res.data.user.id);
