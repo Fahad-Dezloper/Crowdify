@@ -13,6 +13,11 @@ const Dashboard = () => {
 
         const socket = useMemo(()=>io("http://localhost:8080"), []);
 
+        function onVote(){
+            console.log("Voted");
+            socket.emit("vote", {message: "Voted"});
+        }
+
         socket.on("connect", () => {
             console.log("User connected");
         })
@@ -40,7 +45,7 @@ const Dashboard = () => {
 
     return (
        <div className="w-full h-full">
-        {userData ? <StreamView creatorId={userData} playVideo={true}/> : <div>Loading...</div>}
+        {userData ? <StreamView creatorId={userData} playVideo={true} onVote={onVote}/> : <div>Loading...</div>}
        </div>
     )
 }

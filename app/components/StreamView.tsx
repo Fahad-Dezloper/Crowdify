@@ -31,7 +31,14 @@ interface Video {
     "upvotes": number,
     "haveUpvoted": boolean
 }
-const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVideo:boolean}) => {
+
+interface StreamViewProps {
+    creatorId: string;
+    playVideo: boolean;
+    onVote: () => void;
+}
+
+const StreamView = ({creatorId, playVideo = false, onVote}: StreamViewProps) => {
     const [arr, setArr] = useState([])
     const [liked, setLiked] = useState(false);
     // const musicRef = useRef(null);
@@ -50,8 +57,6 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
             }
             return json.activeStream.stream
         });
-
-        // console.log("here response", res.data.streams);
     }
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
@@ -62,7 +67,6 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
     },[])   
 
     function handleVote(streamId: string, isUpvote: boolean){
-
         try{
             fetch(`/api/streams/${isUpvote ? "upvote" : "downvote"}`, {
                 method: "POST",
@@ -70,6 +74,7 @@ const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVide
                     streamId
                 })
             })
+            onVote();
             setLiked(true)
         } catch (e){
             console.log("from fe", e)
