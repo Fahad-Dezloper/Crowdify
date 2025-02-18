@@ -4,11 +4,22 @@
 import axios from "axios"
 import StreamView from "../components/StreamView"
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { io } from "socket.io-client";
 
 const Dashboard = () => {
         const { data: session, status } = useSession();
         const [userData, setUserData] = useState(null);
+
+        const socket = useMemo(()=>io("http://localhost:8080"), []);
+
+        socket.on("connect", () => {
+            console.log("User connected");
+        })
+
+        socket.on("message", (data) => {
+            console.log("Message from server nextjs:", data.id);
+        })
 
         useEffect(() => {
             if (status === "authenticated" && session?.user?.email) {
@@ -28,7 +39,6 @@ const Dashboard = () => {
         }
 
     return (
-        // 91920376-152c-4cb3-ab40-875ddc4abd93
        <div className="w-full h-full">
         {userData ? <StreamView creatorId={userData} playVideo={true}/> : <div>Loading...</div>}
        </div>

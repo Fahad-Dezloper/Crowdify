@@ -27,6 +27,7 @@
     "react-dom": "^19.0.0",
     "react-lite-youtube-embed": "^2.4.0",
     "react-player": "^2.16.0",
+    "socket.io": "^4.8.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "youtube-search-api": "^1.2.2",
@@ -37,9 +38,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/socket.io-client": "^3.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
