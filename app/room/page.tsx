@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const generateRoomId = () => {
   const characters = "abcdefghijklmnopqrstuvwxyz";
@@ -14,16 +16,58 @@ const generateRoomId = () => {
   return roomId;
 };
 
-const formatRoomId = (input) => {
-  let cleanInput = input.replace(/-/g, "").slice(0, 9); // Remove existing dashes & limit length
+const formatRoomId = (input: string) => {
+  const cleanInput = input.replace(/-/g, "").slice(0, 9);
   return cleanInput
-    .match(/.{1,3}/g) // Group into sets of 3
-    ?.join("-") || ""; // Add dashes between groups
+    .match(/.{1,3}/g)
+    ?.join("-") || ""; 
 };
 
+
 const Page = () => {
+  const [createRoomId, setcreateRoomId] = useState("");
   const [joinRoom, setJoinRoom] = useState("");
-  const [createRoom, setCreateRoom] = useState("");
+  const router = useRouter();
+
+
+  async function jointheRoom(joinRoomId: string){
+    if (!joinRoomId) {
+      alert("Room ID cannot be empty!");
+      return;
+    }
+    alert(joinRoomId);
+    try {
+      const res = await axios.post("/api/room/join", {
+        roomId: joinRoomId
+      })
+      if(!res){
+        console.log("Error while joining room");  
+      }
+      router.push(`/room/${res.data.id}`);
+    } catch {
+      console.log("Error while joining room");
+    }
+  }
+
+  async function createtheRoom(createRoomId: string){
+    if (!createRoomId) {
+      alert("Room ID cannot be empty!");
+      return;
+    }
+    alert(createRoomId);
+    try {
+      const res = await axios.post("/api/room/create", {
+        roomId: createRoomId
+      })
+      if(!res){
+        console.log("Error while creating room");  
+      }
+      console.log("here is the response recieved", res);
+      router.push(`/room/${createRoomId}`);
+    } catch {
+      console.log("Error while creating room");
+    }
+  }
 
   return (
     <motion.div className="w-screen bg-white h-screen p-6">
@@ -37,17 +81,12 @@ const Page = () => {
               className="text-black p-3 rounded-2xl outline-none"
               placeholder="abc-def-ghi"
               value={joinRoom}
+              maxLength={11}
               onChange={(e) => setJoinRoom(e.target.value)}
             />
             <button
               className="bg-black text-white px-4 py-2 rounded-2xl"
-              onClick={() => setJoinRoom(generateRoomId())}
-            >
-              Generate
-            </button>
-            <button
-              className="bg-black text-white px-4 py-2 rounded-2xl"
-              // onClick={() => setJoinRoom(generateRoomId())}
+              onClick={() => jointheRoom(joinRoom)}
             >
               GO
             </button>
@@ -60,18 +99,19 @@ const Page = () => {
               type="text"
               className="text-black p-3 rounded-2xl outline-none"
               placeholder="abc-def-ghi"
-              value={createRoom}
-              onChange={(e) => setCreateRoom(formatRoomId(e.target.value))}
+              maxLength={11}
+              value={createRoomId}
+              onChange={(e) => setcreateRoomId(formatRoomId(e.target.value))}
             />
             <button
               className="bg-black text-white px-4 py-2 rounded-2xl"
-              onClick={() => setCreateRoom(generateRoomId())}
+              onClick={() => setcreateRoomId(generateRoomId())}
             >
-              Generate
+              +
             </button>
             <button
               className="bg-black text-white px-4 py-2 rounded-2xl"
-              // onClick={() => setJoinRoom(generateRoomId())}
+              onClick={() => createtheRoom(createRoomId)}
             >
               GO
             </button>

@@ -35,10 +35,11 @@ interface Video {
 interface StreamViewProps {
     creatorId: string;
     playVideo: boolean;
-    onVote: () => void;
+    // onVote: () => void;
+    role: string;
 }
 
-const StreamView = ({creatorId, playVideo = false, onVote}: StreamViewProps) => {
+const StreamView = ({creatorId, playVideo = false, role}: StreamViewProps) => {
     const [arr, setArr] = useState([])
     const [liked, setLiked] = useState(false);
     // const musicRef = useRef(null);
@@ -74,7 +75,7 @@ const StreamView = ({creatorId, playVideo = false, onVote}: StreamViewProps) => 
                     streamId
                 })
             })
-            onVote();
+            // onVote();
             setLiked(true)
         } catch (e){
             console.log("from fe", e)

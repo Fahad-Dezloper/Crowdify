@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
         await prismaClient.upvote.create({
             data: {
                 userId: user.id,
-                streamId: data.streamId
+                streamId: data.streamId,
+                vote: "Upvote"
             }
         });
         return NextResponse.json({
