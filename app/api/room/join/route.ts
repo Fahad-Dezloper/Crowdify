@@ -41,7 +41,7 @@ export async function POST(req: NextRequest){
                 data: {
                     userId: user.id,
                     roomId: room.id, 
-                    role: "USER", 
+                    role: "USER",
                 },
             });
     

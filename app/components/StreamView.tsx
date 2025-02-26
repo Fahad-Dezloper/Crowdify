@@ -15,57 +15,59 @@ import Queue from "./Queue";
 import LeftSidebar from "./leftSidebar";
 import TopBar from "./Topbar";
 import ChatBot from "./ChatBot";
+import { useWebSocket } from "../context/WebContext";
 
-const REFRESH_INTERVAL_MS = 10 * 1000;
+// const REFRESH_INTERVAL_MS = 10 * 1000;
 
-interface Video {
-    "id": string,
-    "type": string,
-    "url": string,
-    "extractedId": string,
-    "title": string,
-    "smallImg": string,
-    "bigImg": string,
-    "active": boolean,
-    "userId": string,
-    "upvotes": number,
-    "haveUpvoted": boolean
-}
+// interface Video {
+//     "id": string,
+//     "type": string,
+//     "url": string,
+//     "extractedId": string,
+//     "title": string,
+//     "smallImg": string,
+//     "bigImg": string,
+//     "active": boolean,
+//     "userId": string,
+//     "upvotes": number,
+//     "haveUpvoted": boolean
+// }
 
-interface StreamViewProps {
-    creatorId: string;
-    playVideo: boolean;
-    // onVote: () => void;
-    role: string;
-}
+// interface StreamViewProps {
+//     creatorId: string;
+//     playVideo: boolean;
+//     // onVote: () => void;
+//     role: string;
+// }
 
-const StreamView = ({creatorId, playVideo = false, role}: StreamViewProps) => {
+const StreamView = ({creatorId, isAdmin, roomId}) => {
     const [arr, setArr] = useState([])
     const [liked, setLiked] = useState(false);
     // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
     const [currentVideo, setCurrentVideo] = useState();
     const [playNextLoader, setPlayNextLoader] = useState(false);
+    const {socket} = useWebSocket();
 
     // console.log("i am arr", arr);
-    async function refreshStreams(){
-        const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
-        const json = await res.json();
-        setArr(json.streams.sort((a, b) => a.upvotes < b.upvotes ? 1 : -1));
-        setCurrentVideo(video => {
-            if(video?.id === json.activeStream?.stream?.id){
-                return video;
-            }
-            return json.activeStream.stream
-        });
-    }
+    // async function refreshStreams(){
+    //     const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
+    //     const json = await res.json();
+    //     setArr(json.streams.sort((a, b) => a.upvotes < b.upvotes ? 1 : -1));
+    //     setCurrentVideo(video => {
+    //         if(video?.id === json.activeStream?.stream?.id){
+    //             return video;
+    //         }
+    //         return json.activeStream.stream
+    //     });
+    // }
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-        refreshStreams();
-        const interval = setInterval(() => {
-            refreshStreams();
-        }, REFRESH_INTERVAL_MS)
-    },[])   
+    // useEffect(() => {
+    //     refreshStreams();
+    //     const interval = setInterval(() => {
+    //         refreshStreams();
+    //     }, REFRESH_INTERVAL_MS)
+    // },[])   
 
     function handleVote(streamId: string, isUpvote: boolean){
         try{
@@ -82,17 +84,31 @@ const StreamView = ({creatorId, playVideo = false, role}: StreamViewProps) => {
         }
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert("clicked")
+
         const res = await fetch("/api/streams/", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 creatorId: creatorId,
-                url: inputLink
+                url: inputLink,
+                roomId: roomId
             })
         });
-        // setArr([...prev, await res.json()])
+        const data = await res.json(); // ✅ Parse response
+        console.log("data received from BE stream:- ", data);
+
+        if(socket){
+            socket.send(
+                JSON.stringify({
+                    type: "addSong",
+                    roomId: roomId,
+                    song: inputLink,
+                    title: "i am song"
+                })
+            )
+        }
         setInputLink('');
     }
 
@@ -116,17 +132,16 @@ const StreamView = ({creatorId, playVideo = false, role}: StreamViewProps) => {
     return (
         <div className="w-screen h-screen flex bg-[#101216] justify-between items-center">
 
-            <LeftSidebar handleSubmit={handleSubmit} inputLink={inputLink} YT_REGEX={YT_REGEX} setInputLink={setInputLink} />
+            <LeftSidebar isAdmin={isAdmin} roomId={roomId} addToQueue={addToQueue} inputLink={inputLink} YT_REGEX={YT_REGEX} setInputLink={setInputLink} />
 
             <div className="w-full h-full flex overflow-hidden flex-col">
                 <TopBar userId={creatorId} />
 
 
-                <div className="w-full h-fit flex items-center scrolll justify-center px-6 pt-1 pb-2">
-                    <Queue queue={arr} handleVote={handleVote} liked={liked}/>
+                <div className="w-full h-[50vh] flex items-center scrolll justify-center px-6 pt-1 pb-2">
+                    <Queue handleVote={handleVote} liked={liked}/>
+                    {/* queue={arr} */}
                 </div>
-
-
 
 
                 <div className="flex w-full h-full overflow-hidden px-6 py-5 gap-4">            
@@ -150,52 +165,6 @@ const StreamView = ({creatorId, playVideo = false, role}: StreamViewProps) => {
                         </div>
                     </div>
             </div>
-
-        {/* currnet video and preview*/}
-            {/* 
-            <div className="">
-                <h1 className="text-white font-semibold text-2xl text-center">Now Playing</h1>
-                {currentVideo ? (
-                <div>
-                    {playVideo ? <>
-                        <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
-                    </> : <>
-                    <img 
-                        src={currentVideo.bigImg} 
-                        className="w-full h-72 object-cover rounded"
-                    />
-                    <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
-                </>}
-            </div>) : (
-                <p className="text-center py-8 text-gray-400">No video playing</p>
-            )}
-            </div> */}
-
-    {/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>}       */}
-    
-     
-{/* Queue Box */}
-            {/* <div className="px-6 py-4 w-[30vw] h-full border-r-2 backdrop-blur-sm overflow-y-auto flex flex-col">
-                <h1 className="font-funnel text-3xl text-white mb-7">Upcoming</h1>
-                {arr.map((item: Video, index) => (
-                    <div key={index} className="flex gap-4 hover:bg-gray-500 p-2 items-center justify-between text-white">
-                        <div className="flex items-center gap-2">
-                            <div className="max-w-[8vw] max-h-[10vh] rounded-xl overflow-hidden">
-                            <img src={item.bigImg} alt="Preview Image" className="w-full h-full object-cover" />
-                            </div>
-                            <h1 className="text-[0.65rem] font-semibold leading-none">{item.title}</h1>
-                        </div>
-
-                        <div className="flex bg-black rounded-2xl py-2 px-3 text-sm items-center">
-                            <button onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="flex gap-4 items-center text-white">
-                            {item.haveUpvoted ? <div className="flex gap-6"><ChevronDown size={18} /></div> : <div className="flex gap-6"><ChevronUp  size={18} className={`${liked && "text-blue-800"}`} /></div>}{item.upvotes} 
-                            </button>
-                            <Link href={item.url}><Link2 size={18} /></Link>
-                        </div>
-
-                    </div>
-                ))}
-            </div> */}
         </div>
     )
 }

@@ -27,3 +27,111 @@ todo: replace this with id everywhere // downvote/route.ts
 // add animation while copying the roomId
 
 //Add Websocket Implementation
+
+
+// add websocket and other implementation room is being created perfectly admin powers diffrent user power diffrent
+
+
+
+
+
+/* eslint-disable @next/next/no-img-element */
+"use client"
+
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+
+const Page = () => {
+  const { roomId } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [roomData, setRoomData] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    const fetchRoomDetails = async () => {
+      try {
+        const res = await axios.get(`/api/room/${roomId}`);
+        setRoomData(res.data.room); 
+        setIsAdmin(res.data.isAdmin);
+      } catch (err) {
+        setError("Room not found or an error occurred.");
+        console.log("error", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoomDetails();
+  }, [roomId]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+    return (
+    <div className="room-container">
+      <h1>Room ID: {roomId}</h1>
+      <h2>{isAdmin ? "You are the Admin" : "You are a Participant"}</h2>
+      <p>Room Details: {JSON.stringify(roomData)}</p>
+    </div>
+    )
+  }
+  
+  export default Page;
+  {/* {userData ? <StreamView creatorId={userData} role={role} playVideo={true}/> : <div>coming......</div>} */}
+
+
+
+
+
+
+
+
+        {/* currnet video and preview*/}
+            {/* 
+            <div className="">
+                <h1 className="text-white font-semibold text-2xl text-center">Now Playing</h1>
+                {currentVideo ? (
+                <div>
+                    {playVideo ? <>
+                        <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
+                    </> : <>
+                    <img 
+                        src={currentVideo.bigImg} 
+                        className="w-full h-72 object-cover rounded"
+                    />
+                    <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
+                </>}
+            </div>) : (
+                <p className="text-center py-8 text-gray-400">No video playing</p>
+            )}
+            </div> */}
+
+    {/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>}       */}
+    
+     
+{/* Queue Box */}
+            {/* <div className="px-6 py-4 w-[30vw] h-full border-r-2 backdrop-blur-sm overflow-y-auto flex flex-col">
+                <h1 className="font-funnel text-3xl text-white mb-7">Upcoming</h1>
+                {arr.map((item: Video, index) => (
+                    <div key={index} className="flex gap-4 hover:bg-gray-500 p-2 items-center justify-between text-white">
+                        <div className="flex items-center gap-2">
+                            <div className="max-w-[8vw] max-h-[10vh] rounded-xl overflow-hidden">
+                            <img src={item.bigImg} alt="Preview Image" className="w-full h-full object-cover" />
+                            </div>
+                            <h1 className="text-[0.65rem] font-semibold leading-none">{item.title}</h1>
+                        </div>
+
+                        <div className="flex bg-black rounded-2xl py-2 px-3 text-sm items-center">
+                            <button onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="flex gap-4 items-center text-white">
+                            {item.haveUpvoted ? <div className="flex gap-6"><ChevronDown size={18} /></div> : <div className="flex gap-6"><ChevronUp  size={18} className={`${liked && "text-blue-800"}`} /></div>}{item.upvotes} 
+                            </button>
+                            <Link href={item.url}><Link2 size={18} /></Link>
+                        </div>
+
+                    </div>
+                ))}
+            </div> */}

@@ -23,7 +23,6 @@ const formatRoomId = (input: string) => {
     ?.join("-") || ""; 
 };
 
-
 const Page = () => {
   const [createRoomId, setcreateRoomId] = useState("");
   const [joinRoom, setJoinRoom] = useState("");
@@ -35,18 +34,7 @@ const Page = () => {
       alert("Room ID cannot be empty!");
       return;
     }
-    alert(joinRoomId);
-    try {
-      const res = await axios.post("/api/room/join", {
-        roomId: joinRoomId
-      })
-      if(!res){
-        console.log("Error while joining room");  
-      }
-      router.push(`/room/${res.data.id}`);
-    } catch {
-      console.log("Error while joining room");
-    }
+      router.push(`/room/${joinRoomId}`);
   }
 
   async function createtheRoom(createRoomId: string){
@@ -54,7 +42,7 @@ const Page = () => {
       alert("Room ID cannot be empty!");
       return;
     }
-    alert(createRoomId);
+    // alert(createRoomId);
     try {
       const res = await axios.post("/api/room/create", {
         roomId: createRoomId
@@ -82,7 +70,7 @@ const Page = () => {
               placeholder="abc-def-ghi"
               value={joinRoom}
               maxLength={11}
-              onChange={(e) => setJoinRoom(e.target.value)}
+              onChange={(e) => setJoinRoom(formatRoomId(e.target.value))}
             />
             <button
               className="bg-black text-white px-4 py-2 rounded-2xl"
