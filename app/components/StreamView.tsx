@@ -77,6 +77,17 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
                     streamId
                 })
             })
+            .then(res => res.json())
+            .then(updatedSong => {
+                if(socket){
+                    socket.send(
+                        JSON.stringify({
+                            type: "voteUpdate",
+                            song: update
+                        })
+                    )
+                }
+            })
             // onVote();
             setLiked(true)
         } catch (e){
@@ -104,8 +115,11 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
                 JSON.stringify({
                     type: "addSong",
                     roomId: roomId,
-                    song: inputLink,
-                    title: "i am song"
+                    song: {
+                        url: inputLink,
+                        title: data.title,      
+                        thumbnail: data.bigImg, 
+                    },
                 })
             )
         }
@@ -139,7 +153,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
 
 
                 <div className="w-full h-[50vh] flex items-center scrolll justify-center px-6 pt-1 pb-2">
-                    <Queue handleVote={handleVote} liked={liked}/>
+                    <Queue handleVote={handleVote} liked={liked} />
                     {/* queue={arr} */}
                 </div>
 

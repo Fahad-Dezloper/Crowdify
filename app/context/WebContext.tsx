@@ -50,6 +50,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
+            console.log("data rec for sending in ws: ", data);
             if (data.type === "message") {
               setMessages((prev) => [...prev, data.text]);
             }
@@ -60,9 +61,16 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
               case "addSong":
                 setQueue((prevQueue) => [...prevQueue, data.song]);
                 break;
+              case "voteUpdate":
+                setQueue((prevQueue) => 
+                  prevQueue.map((item) =>
+                  item.id === data.song.id ? data.song : item
+              ));
+                break;
               default:
                 console.log("Unknown Websocket event:", data);
             }
+            console.log("data rec for sending in ws: ", data);
             console.log('message received');
           } catch (error) {
             console.error("Error parsing WebSocket message:", error);

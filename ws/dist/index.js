@@ -67,9 +67,20 @@ wss.on("connection", (ws) => {
                 });
             }
             else if (data.type === "addSong") {
+                // console.log("data rec for ws: ", data);
                 wss.clients.forEach((client) => {
                     if (client.readyState === ws_1.WebSocket.OPEN) {
                         client.send(JSON.stringify({ type: "addSong", song: data.song }));
+                    }
+                });
+            }
+            else if (data.type === "voteUpdate") {
+                wss.clients.forEach((client) => {
+                    if (client.readyState === ws_1.WebSocket.OPEN) {
+                        client.send(JSON.stringify({
+                            type: "voteUpdate",
+                            song: data.song,
+                        }));
                     }
                 });
             }

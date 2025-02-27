@@ -31,7 +31,9 @@ todo: replace this with id everywhere // downvote/route.ts
 
 // add websocket and other implementation room is being created perfectly admin powers diffrent user power diffrent
 
+// stream add show its meta data [done]. 
 
+error while upvoting using ws 
 
 
 

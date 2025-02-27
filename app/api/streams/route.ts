@@ -25,14 +25,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Wrong URL format" }, { status: 411 });
         }
 
-        console.log("reached here to add");
+        // console.log("reached here to add");
 
         const extractedId = data.url.split("?v=")[1];
         const res = await youtubesearchapi.GetVideoDetails(extractedId);
-        console.log("YouTube API Response:", res);
+        // console.log("YouTube API Response:", res);
 
         const thumbnails = res.thumbnail.thumbnails;
-        console.log("data thumb", thumbnails);
+        // console.log("data thumb", thumbnails);
 
         thumbnails.sort((a: { width: number }, b: { width: number }) => (a.width < b.width ? -1 : 1));
 
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
             }
         });
 
-        console.log("Stream successfully added:", stream);
+        // console.log("Stream successfully added:", stream);
 
         return NextResponse.json({
             message: "Added Stream",
