@@ -75,11 +75,12 @@ wss.on("connection", (ws) => {
                 });
             }
             else if (data.type === "voteUpdate") {
+                console.log("data ", data);
                 wss.clients.forEach((client) => {
                     if (client.readyState === ws_1.WebSocket.OPEN) {
                         client.send(JSON.stringify({
                             type: "voteUpdate",
-                            song: data.song,
+                            song: Object.assign(Object.assign({}, data.song), { upvoteCount: data.upvoteCount })
                         }));
                     }
                 });
