@@ -4,6 +4,8 @@ import { useWebSocket } from "../context/WebContext";
 
 const Queue = ({handleVote, liked}) => {
     const {queue} = useWebSocket();
+    console.log("haa bhai kya  laye ho", queue);
+    console.log("haa bhai liked", liked);
     // console.log("here we have queue", queue);
     function concatenateWithinLimit(text) {
         let result = "";
@@ -46,20 +48,13 @@ const Queue = ({handleVote, liked}) => {
                         <div className="flex items-center justify-between  w-full">
                             <div className="flex  leading-none font-funnel items-end">
                             <ChartNoAxesColumn size={20} className="text-gray-400" />
-                            <span>{item.upvotes === 0 ? "" : item.upvotes}</span>
+                            <span>{item.upvoteCount === 0 ? "" : item.upvoteCount}</span>
                             </div>
                             <div className="flex gap-2">
-                            <div onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="p-1 bg-gray-100 hover:bg-gray-200 rounded-md cursor-pointer">
+                            <div onClick={() => handleVote(item)} className={`p-1  rounded-md cursor-pointer transition-transform duration-200 active:scale-90  ${liked[item.streamId] ? "bg-blue-400" : ""}`}>
                                 <ChevronUp size={20} />
+                            </div> 
                             </div>
-                            <div onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="p-1 bg-gray-100 hover:bg-gray-200 rounded-md cursor-pointer">
-                            <ChevronDown size={20} />
-                            </div>
-                            </div>
-                            {/* <button onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="flex gap-4 items-center text-black">
-                            {item.haveUpvoted ? <div className="flex gap-6"><ChevronDown size={18} /></div> : <div className="flex gap-6"><ChevronUp  size={18} className={`${liked && "text-blue-800"}`} /></div>} 
-                            </button> */}
-                            {/* <Link href={item.url}><Link2 size={18} /></Link> */}
                         </div>
 
                     </div>

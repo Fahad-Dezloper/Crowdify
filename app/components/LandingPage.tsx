@@ -83,7 +83,7 @@ const LandingPage = () => {
   return (
     <>
     {/* section 1 */}
-    <Navbar />
+    {/* <Navbar /> */}
     <div className='flex flex-col w-screen h-screen fixed top-0 z-10 items-center justify-center'>
     <div className="w-fit h-fit font-funnel flex items-center justify-center leading-none text-[9vw] text-white">
       <span>Cr</span> 

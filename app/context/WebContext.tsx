@@ -61,11 +61,15 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
               case "addSong":
                 setQueue((prevQueue) => [...prevQueue, data.song]);
                 break;
-              case "voteUpdate":
-                setQueue((prevQueue) => 
-                  prevQueue.map((item) =>
-                  item.id === data.song.id ? data.song : item
-              ));
+                case "voteUpdate":
+                setQueue((prevQueue) => {
+                  const newQueue = JSON.parse(JSON.stringify(prevQueue));
+                  return newQueue.map((item) =>
+                    item.streamId === data.song.streamId 
+                      ? { ...item, upvoteCount: data.song.upvoteCount } 
+                      : item
+                  );
+                });
                 break;
               default:
                 console.log("Unknown Websocket event:", data);

@@ -42,10 +42,11 @@ import { useWebSocket } from "../context/WebContext";
 
 const StreamView = ({creatorId, isAdmin, roomId}) => {
     const [arr, setArr] = useState([])
-    const [liked, setLiked] = useState(false);
+    const [likedSongs, setLikedSongs] = useState({});
     // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
     const [currentVideo, setCurrentVideo] = useState();
+    const [isUpvote, setIsUpvote] = useState(false);
     const [playNextLoader, setPlayNextLoader] = useState(false);
     const {socket} = useWebSocket();
 
@@ -69,31 +70,37 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
     //     }, REFRESH_INTERVAL_MS)
     // },[])   
 
-    function handleVote(streamId: string, isUpvote: boolean){
-        try{
-            fetch(`/api/streams/${isUpvote ? "upvote" : "downvote"}`, {
+    function handleVote(item) {
+        console.log("Voting for stream:", item);
+        
+        try {
+            fetch(`/api/streams/vote`, {
                 method: "POST",
-                body: JSON.stringify({
-                    streamId
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ item }),
             })
             .then(res => res.json())
-            .then(updatedSong => {
-                if(socket){
-                    socket.send(
-                        JSON.stringify({
-                            type: "voteUpdate",
-                            song: update
-                        })
-                    )
+            .then(response => {
+                console.log(response.message);
+                
+                if (socket) {
+                    socket.send(JSON.stringify({
+                        type: "voteUpdate",
+                        song: item,
+                        upvoteCount: response.upvoteCount 
+                    }));
                 }
+    
+                setLikedSongs(prev => ({ ...prev, [item.streamId]: !prev[item.streamId] }));
             })
-            // onVote();
-            setLiked(true)
-        } catch (e){
-            console.log("from fe", e)
+            .catch(error => {
+                console.error("Error in handleVote:", error);
+            });
+    
+        } catch (e) {
+            console.error("Error in handleVote:", e);
         }
-    }
+    }     
 
     const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -118,7 +125,8 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
                     song: {
                         url: inputLink,
                         title: data.title,      
-                        thumbnail: data.bigImg, 
+                        thumbnail: data.bigImg,
+                        streamId: data.id
                     },
                 })
             )
@@ -153,7 +161,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
 
 
                 <div className="w-full h-[50vh] flex items-center scrolll justify-center px-6 pt-1 pb-2">
-                    <Queue handleVote={handleVote} liked={liked} />
+                    <Queue handleVote={handleVote} liked={likedSongs} />
                     {/* queue={arr} */}
                 </div>
 

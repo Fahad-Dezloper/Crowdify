@@ -34,6 +34,7 @@ export default function RootLayout({
         className={`${funnelDisplay.variable} ${roboto.variable} antialiased`}
       >
         <Provider>
+        <Navbar />
         {children}
         </Provider>
       </body>

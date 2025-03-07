@@ -36,6 +36,20 @@ todo: replace this with id everywhere // downvote/route.ts
 error while upvoting using ws 
 
 
+        if (!rooms.has(roomId)) {
+          rooms.set(roomId, { users: new Set() });
+        }
+
+      var room1=  rooms.get(roomId)?
+
+      room1.users.add(ws);
+
+
+        ws.send({
+          type:"init_quue_data",
+          queue: room.queue
+        })
+
 
 /* eslint-disable @next/next/no-img-element */
 "use client"
