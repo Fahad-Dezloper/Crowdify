@@ -51,12 +51,12 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
           try {
             const data = JSON.parse(event.data);
             console.log("data rec for sending in ws: ", data);
-            if (data.type === "message") {
-              setMessages((prev) => [...prev, data.text]);
-            }
             switch (data.type){
               case "message":
                 setMessages((prev) => [...prev, data.text]);
+                break;
+              case "songQueue":
+                setQueue(data.queue);
                 break;
               case "addSong":
                 setQueue((prevQueue) => [...prevQueue, data.song]);
