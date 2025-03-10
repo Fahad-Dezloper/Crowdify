@@ -2,10 +2,15 @@
 
 import { prismaClient } from "@/app/lib/db";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(){
+export async function GET(request: NextRequest){
     const session = await getServerSession();
+    const { searchParams } = new URL(request.url);
+    const roomId = searchParams.get('roomId');
+
+      // Use the parameters
+      console.log('roomId:', roomId);
 
     const user = await prismaClient.user.findFirst({
         where: {
@@ -20,40 +25,38 @@ export async function GET(){
             status: 403
         })
     }
-    const mostUpvotedStream = await prismaClient.stream.findFirst({
+    const findRoomId = await prismaClient.room.findFirst({
         where: {
-            userId: user.id,
-            played: false
-        },
-        orderBy: {
-            upvotes: {
-                _count: 'desc'
-            } 
+            code: roomId
         }
     });
 
-    await Promise.all([prismaClient.currentStream.upsert({
+    const mostUpvotedStream = await prismaClient.stream.findFirst({
         where: {
-            userId: user.id
+            roomId: findRoomId?.id
         },
-        update: {
-            streamId: mostUpvotedStream?.id
-        },
-        create: {
-            userId: user.id,
-            streamId: mostUpvotedStream?.id
+        orderBy: {
+            upvotes: {
+                _count: "desc"
+            }
         }
-    }), prismaClient.stream.update({
-        where: {
-            id: mostUpvotedStream?.id ?? ""
-        },
-        data: {
-            played: true,
-            playedTs: new Date(),
-        }
-    })])
+    });
+    
+    console.log(mostUpvotedStream);
+
+    console.log("hree is the stream", mostUpvotedStream);
 
     return NextResponse.json({
         stream: mostUpvotedStream
     })
 }
+
+// export async function GET(request) {
+//         const { searchParams } = new URL(request.url);
+//       const roomId = searchParams.get('roomId');
+
+//         // Use the parameters
+//         console.log('roomId:', roomId);
+
+//         return NextResponse.status(200).json({ message: 'Parameters received' });
+// }

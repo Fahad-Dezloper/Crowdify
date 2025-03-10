@@ -49,26 +49,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
     const [isUpvote, setIsUpvote] = useState(false);
     const [playNextLoader, setPlayNextLoader] = useState(false);
     const {socket} = useWebSocket();
-
-    // console.log("i am arr", arr);
-    // async function refreshStreams(){
-    //     const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
-    //     const json = await res.json();
-    //     setArr(json.streams.sort((a, b) => a.upvotes < b.upvotes ? 1 : -1));
-    //     setCurrentVideo(video => {
-    //         if(video?.id === json.activeStream?.stream?.id){
-    //             return video;
-    //         }
-    //         return json.activeStream.stream
-    //     });
-    // }
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    // useEffect(() => {
-    //     refreshStreams();
-    //     const interval = setInterval(() => {
-    //         refreshStreams();
-    //     }, REFRESH_INTERVAL_MS)
-    // },[])   
+    
 
     function handleVote(item) {
         console.log("Voting for stream:", item);
@@ -92,6 +73,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
                 }
     
                 setLikedSongs(prev => ({ ...prev, [item.streamId]: !prev[item.streamId] }));
+                PlayNext();
             })
             .catch(error => {
                 console.error("Error in handleVote:", error);
@@ -114,7 +96,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
                 roomId: roomId
             })
         });
-        const data = await res.json(); // ✅ Parse response
+        const data = await res.json();
         console.log("data received from BE stream:- ", data);
 
         if(socket){
@@ -134,22 +116,23 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
         setInputLink('');
     }
 
-    const PlayNext = async () => {
-        if(arr.length > 0){
+const PlayNext = async () => {
+    console.log("bol bosdk")
             try {
                 setPlayNextLoader(true);
-                const data = await fetch('/api/streams/next', {
-                    method: "GET",
+                const data = await axios.get('/api/streams/next', {
+                    params: {
+                        roomId: roomId
+                    }
                 })
-                const json = await data.json();
-                setCurrentVideo(json.stream);
+                console.log("bhai json laaya hu", data);
+                setCurrentVideo(data.data.stream);
             } catch (error) {
                 console.log(error);
             } finally{
                 setPlayNextLoader(false)
             }
-        }
-    }
+}
 
     return (
         <div className="w-screen h-screen flex bg-[#101216] justify-between items-center">

@@ -1,3 +1,12 @@
+run redis and postgres database both
+
+move to play the songs part.
+
+add admin actions and user controls
+
+
+
+
 //create a singleton inside - db.ts
 
 //should contain youtube or spotify link only using zod - in stream/route.ts
