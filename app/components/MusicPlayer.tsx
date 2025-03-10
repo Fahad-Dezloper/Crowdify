@@ -10,7 +10,9 @@ const MusicPlayer = ({video, onClick}) => {
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [mute, setMute] = useState(false);
-  const playerRef = useRef<ReactPlayer>(null)
+  const playerRef = useRef<ReactPlayer>(null);
+
+  console.log("new", video);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
@@ -21,6 +23,11 @@ const MusicPlayer = ({video, onClick}) => {
   const handleMute = () => {
     setMute(!mute);
   }
+
+  const handleSongEnd = () => {
+    setProgress(0); 
+    onClick(); 
+  };
 
   const handleProgress = (state: { played: number; playedSeconds: number }) => {
     setProgress(state.playedSeconds)
@@ -48,6 +55,7 @@ const MusicPlayer = ({video, onClick}) => {
                     width="100%"
                     height="100%"
                     muted={mute}
+                    onEnded={handleSongEnd}
                     onProgress={handleProgress}
                     onDuration={handleDuration}
                     config={{

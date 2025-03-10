@@ -105,6 +105,36 @@ wss.on("connection", (ws) => {
           }
         })
       }
+
+      else if(data.type === "updateQueue"){
+        console.log("updated queue data", data);
+
+        const songToRemove = data.song.currentVideo;
+        redisClient.lRange(`queue:${roomId}`, 0, -1).then((songs) => {
+        let parsedQueue = songs.map((song) => JSON.parse(song));
+        
+        // Remove the song
+        parsedQueue = parsedQueue.filter(song => song.streamId !== songToRemove.id);
+        
+        // Clear and update Redis queue
+        redisClient.del(`queue:${roomId}`).then(() => {
+          const updatedQueue = parsedQueue.map(song => JSON.stringify(song));
+          redisClient.rPush(`queue:${roomId}`, updatedQueue);
+        });
+
+        // Broadcast updated queue to all clients
+        // @ts-ignore
+        rooms.get(roomId)?.users.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ type: "songQueue", queue: parsedQueue }));
+          }
+        });
+
+    console.log("Updated Queue:", parsedQueue);
+  }).catch(console.error);
+      }
+
+
     } catch (error) {
       console.error("Failed to parse incoming message:", error);
     }

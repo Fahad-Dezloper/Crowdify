@@ -7,18 +7,18 @@ const Queue = ({handleVote, liked}) => {
     console.log("haa bhai kya  laye ho", queue);
     console.log("haa bhai liked", liked);
     // console.log("here we have queue", queue);
-    function concatenateWithinLimit(text) {
-        let result = "";
-        let count = 0;
+    // function concatenateWithinLimit(text) {
+    //     let result = "";
+    //     let count = 0;
     
-        for (let char of text) {
-            if (char !== " ") count++;
-            if (count > 26) break;
-            result += char;
-        }
+    //     for (let char of text) {
+    //         if (char !== " ") count++;
+    //         if (count > 26) break;
+    //         result += char;
+    //     }
     
-        return result;
-    }
+    //     return result;
+    // }
 
     return (
         <div className="bg-white w-full h-fit flex flex-col gap-4 pb-8 pt-4 overflow-x-auto scrolll px-6 rounded-2xl">
@@ -42,7 +42,7 @@ const Queue = ({handleVote, liked}) => {
                             <div className="min-w-[10vw] h-[13vh] rounded-xl overflow-hidden">
                             <img src={item.thumbnail} alt="Preview Image" className="w-full h-full object-cover" />
                             </div>
-                            <h1 className="text-xs font-semibold leading-none text-center">{concatenateWithinLimit(item.title)}</h1>
+                            <h1 className="text-xs font-semibold leading-none text-center">{item.title}</h1>
                         </div>
 
                         <div className="flex items-center justify-between  w-full">

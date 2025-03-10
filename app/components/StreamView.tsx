@@ -45,7 +45,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
     const [likedSongs, setLikedSongs] = useState({});
     // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
-    const [currentVideo, setCurrentVideo] = useState();
+    const [currentVideo, setCurrentVideo] = useState(null);
     const [isUpvote, setIsUpvote] = useState(false);
     const [playNextLoader, setPlayNextLoader] = useState(false);
     const {socket} = useWebSocket();
@@ -117,15 +117,36 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
     }
 
 const PlayNext = async () => {
-    console.log("bol bosdk")
             try {
                 setPlayNextLoader(true);
+
+                //delete the song
+                if(currentVideo !== null){
+                    const remove = await axios.post('/api/streams/rm', currentVideo);
+                    if(socket){
+                        socket.send(
+                            JSON.stringify({
+                                type: "updateQueue",
+                                roomId: roomId,
+                                song: {
+                                    currentVideo: currentVideo
+                                }
+                            })
+                        )
+                    }
+                }
+
+
+                
+                //next most upvoted song
                 const data = await axios.get('/api/streams/next', {
                     params: {
                         roomId: roomId
                     }
                 })
+
                 console.log("bhai json laaya hu", data);
+
                 setCurrentVideo(data.data.stream);
             } catch (error) {
                 console.log(error);
@@ -155,7 +176,7 @@ const PlayNext = async () => {
                     <div className="w-[40vw] h-full">
                         <div className="w-full h-full bg-[#e6e6e6] rounded-2xl p-5 px-8" >
                             {currentVideo ? (
-                                <MusicPlayer video={currentVideo} onClick={PlayNext} />
+                                <MusicPlayer video={currentVideo} onClick={() => PlayNext()} />
                                         ) : 
                                         (
                                         <div className="w-full h-full bg-gray-400 flex flex-col rounded-2xl">

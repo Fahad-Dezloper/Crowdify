@@ -58,6 +58,10 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
               case "songQueue":
                 setQueue(data.queue);
                 break;
+              case "updateQueue":
+                console.log("update queue", data);
+                setQueue((prevQueue) => prevQueue.filter(song => song.streamId !== data.song.currentVideo.id));
+                break;
               case "addSong":
                 setQueue((prevQueue) => [...prevQueue, data.song]);
                 break;
