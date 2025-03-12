@@ -179,12 +179,8 @@ const PlayNext = async () => {
                                 <MusicPlayer video={currentVideo} onClick={() => PlayNext()} />
                                         ) : 
                                         (
-                                        <div className="w-full h-full bg-gray-400 flex flex-col rounded-2xl">
-                                            <div className="w-full h-full bg-blue-400">
-                                            </div>
-                                            <div className="w-full h-full bg-yellow-400">
-                                                    <Button onClick={PlayNext}>Play Next</Button>
-                                            </div>
+                                        <div className="w-full h-full  flex flex-col rounded-2xl">
+                                            <img src="/carddd.png" alt="card" className="w-full h-full object-cover" />
                                         </div>
                                     )}
                             </div>

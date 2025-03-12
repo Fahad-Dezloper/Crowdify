@@ -89,6 +89,7 @@ wss.on("connection", (ws) => {
             }
             else if (data.type === "addSong" && roomId) {
                 const song = data.song; // Extract song object
+                console.log("song addedd", data);
                 // Store song in Redis List
                 redisClient.rPush(`queue:${roomId}`, JSON.stringify(song)).then(() => {
                     console.log(`Song added to queue in Redis: ${song.title}`);
@@ -114,7 +115,6 @@ wss.on("connection", (ws) => {
             else if (data.type === "updateQueue") {
                 console.log("updated queue data", data);
                 const songToRemove = data.song.currentVideo;
-                // Fetch current queue from Redis
                 redisClient.lRange(`queue:${roomId}`, 0, -1).then((songs) => {
                     var _a;
                     let parsedQueue = songs.map((song) => JSON.parse(song));

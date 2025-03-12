@@ -1,6 +1,6 @@
 run redis and postgres database both
 
-move to play the songs part.
+votes are not being stored in redis and updated on refresh going away when refreshed
 
 add admin actions and user controls
 

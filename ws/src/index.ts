@@ -73,7 +73,7 @@ wss.on("connection", (ws) => {
 
       else if (data.type === "addSong" && roomId){
         const song = data.song; // Extract song object
-
+        console.log("song addedd", data);
         // Store song in Redis List
         redisClient.rPush(`queue:${roomId}`, JSON.stringify(song)).then(() => {
           console.log(`Song added to queue in Redis: ${song.title}`);
