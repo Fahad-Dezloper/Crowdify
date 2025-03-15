@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const data = await req.json();
-        console.log("Received Vote Data:", data);
+        // console.log("Received Vote Data:", data);
 
         const streamId = data.item?.streamId;
         if (!streamId) {
@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
                 where: { streamId: streamId }
             });
 
-            console.log("after unvote", datt);
-            console.log("final count", upvoteCount);
+            // console.log("after unvote", datt);
+            // console.log("final count", upvoteCount);
             return NextResponse.json({ message: "Vote removed", upvoteCount });
         } else {
             // If no vote exists, create a new upvote
@@ -65,8 +65,8 @@ export async function POST(req: NextRequest) {
             const upvoteCount = await prismaClient.upvote.count({
                 where: { streamId: streamId }
             });
-            console.log("after vote", dat);
-            console.log("final count", upvoteCount);
+            // console.log("after vote", dat);
+            // console.log("final count", upvoteCount);
             return NextResponse.json({ message: "vote approved", upvoteCount });
         }
         

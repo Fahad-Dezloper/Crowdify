@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: { roomId: stri
     const url = new URL(req.url);
     const pathSegments = url.pathname.split("/");
     const roomId = pathSegments[pathSegments.length - 1];
-    console.log("room id is here:-", roomId);
+    // console.log("room id is here:-", roomId);
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: { roomId: stri
         }
     });
   
-    console.log("finding room");
+    // console.log("finding room");
     try {
       const room = await prismaClient.room.findUnique({
         where: { code: roomId },
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, { params }: { params: { roomId: stri
         return NextResponse.json({ error: "Room not found" }, { status: 404 });
       }
   
-      console.log("room details", room);
+      // console.log("room details", room);
       const isAdmin = user ? user.id === room.adminId : false;
   
       return NextResponse.json({ room, isAdmin, userId: user?.id });

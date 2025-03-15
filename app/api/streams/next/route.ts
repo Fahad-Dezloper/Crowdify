@@ -10,7 +10,7 @@ export async function GET(request: NextRequest){
     const roomId = searchParams.get('roomId');
 
       // Use the parameters
-      console.log('roomId:', roomId);
+    //   console.log('roomId:', roomId);
 
     const user = await prismaClient.user.findFirst({
         where: {
@@ -42,9 +42,9 @@ export async function GET(request: NextRequest){
         }
     });
     
-    console.log(mostUpvotedStream);
+    // console.log(mostUpvotedStream);
 
-    console.log("hree is the stream", mostUpvotedStream);
+    // console.log("hree is the stream", mostUpvotedStream);
 
     return NextResponse.json({
         stream: mostUpvotedStream

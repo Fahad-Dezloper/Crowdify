@@ -6,7 +6,7 @@ export async function POST(req: NextRequest){
     const session = await getServerSession();
     const {roomId} = await req.json();
 
-    console.log("rooom creating", roomId)
+    // console.log("rooom creating", roomId)
      const user = await prismaClient.user.findFirst({
             where: {
                 email: session?.user?.email ?? ""
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest){
         }
         try {
             // Find the room by its code
-            console.log("founding room");
+            // console.log("founding room");
             const room = await prismaClient.room.findUnique({
                 where: { code: roomId },
             });
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest){
             }
     
             // Add user to RoomUser table
-            console.log("here i have reached", room.id)
+            // console.log("here i have reached", room.id)
             const roomUser = await prismaClient.roomUser.create({
                 data: {
                     userId: user.id,
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest){
                 },
             });
     
-            console.log("User joined the room:", roomUser);
+            // console.log("User joined the room:", roomUser);
     
             return NextResponse.json({
                 message: "Joined successfully"

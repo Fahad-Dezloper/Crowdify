@@ -12,7 +12,7 @@ const MusicPlayer = ({video, onClick}) => {
   const [mute, setMute] = useState(false);
   const playerRef = useRef<ReactPlayer>(null);
 
-  console.log("new", video);
+  // console.log("new", video);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)

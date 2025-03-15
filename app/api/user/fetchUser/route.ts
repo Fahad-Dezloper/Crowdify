@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req, res){
-    console.log("called here first")
+    // console.log("called here first")
     const session = await getServerSession();
 
     const user = await prismaClient.user.findFirst({
@@ -12,7 +12,7 @@ export async function GET(req, res){
         }
     })
 
-    console.log("user data here", user);
+    // console.log("user data here", user);
 
     if(!user){
         return NextResponse.json({

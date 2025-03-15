@@ -4,7 +4,7 @@ import { NextResponse, NextRequest } from "next/server";
 export async function POST(req: NextRequest){
     const songRemove = await req.json();
 
-    console.log("songRemove", songRemove);
+    // console.log("songRemove", songRemove);
 
     const stream = await prismaClient.stream.delete({
         where: {
@@ -12,6 +12,6 @@ export async function POST(req: NextRequest){
         }
     })
 
-    console.log("song removed successfuly", stream);
+    // console.log("song removed successfuly", stream);
     return NextResponse.json(stream);
 }

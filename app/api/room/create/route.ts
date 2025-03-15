@@ -5,14 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest){
     const session = await getServerSession();
     const {roomId} = await req.json();
-    console.log("room Id", roomId)
+    // console.log("room Id", roomId)
 
     const user = await prismaClient.user.findFirst({
         where: {
             email: session?.user?.email ?? ""
         }
     });
-    console.log("here is am ", session?.user?.email);
+    // console.log("here is am ", session?.user?.email);
 
     if(!user){
         return NextResponse.json({
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest){
         })
     }
 
-    console.log("here reached 2", roomId, user);
+    // console.log("here reached 2", roomId, user);
     try {
         const room = await prismaClient.room.create({
             data: {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest){
             }
         });
 
-        console.log("Room Created on 1st:", room);
+        // console.log("Room Created on 1st:", room);
         
         const roomUser = await prismaClient.roomUser.create({
             data: {

@@ -4,8 +4,8 @@ import { useWebSocket } from "../context/WebContext";
 
 const Queue = ({handleVote, liked}) => {
     const {queue} = useWebSocket();
-    console.log("haa bhai kya  laye ho", queue);
-    console.log("haa bhai liked", liked);
+    // console.log("haa bhai kya  laye ho", queue);
+    // console.log("haa bhai liked", liked);
     // console.log("here we have queue", queue);
     function concatenateWithinLimit(text) {
         let result = "";

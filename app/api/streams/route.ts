@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     try {
         // ✅ First, log the raw request body before parsing
         const rawBody = await req.json();
-        console.log("Received raw data:", rawBody);
+        // console.log("Received raw data:", rawBody);
 
         // ✅ Now parse it
         const data = CreateStreamSchema.parse(rawBody);

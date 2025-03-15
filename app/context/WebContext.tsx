@@ -22,16 +22,16 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     const [roomIdd, setRoomIdd] = useState<string | null>(null);
     const [queue, setQueue] = useState<any[]>([])
 
-    console.log("response from roomId", roomId);
+    // console.log("response from roomId", roomId);
 
     const fetchDets = async () => {
         const res = await fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId);
-        console.log("res from /api/room:-", res);
+        // console.log("res from /api/room:-", res);
         setRoomData(res);
     }
     useEffect(() => {
         if (roomId) {
-          console.log("roomId.roomId", roomId);
+          // console.log("roomId.roomId", roomId);
           setRoomIdd(Array.isArray(roomId) ? roomId[0] : roomId);
         }
         fetchDets();
