@@ -1,11 +1,25 @@
+"use client"
 import { ChartNoAxesColumn, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Link2 } from "lucide-react"
 import Link from "next/link"
 import { useWebSocket } from "../context/WebContext";
 
-const Queue = ({handleVote, liked}) => {
-    const {queue} = useWebSocket();
-    // console.log("haa bhai kya  laye ho", queue);
-    // console.log("haa bhai liked", liked);
+const Queue = () => {
+    const { queue, upvoteSong, userUpvotes, setUserUpvotes, userId } = useWebSocket();
+    console.log("haa bhai liked", queue);
+    const handleUpvote = (songId) => {
+        console.log("called");
+        if (!songId || !userId) return;
+    
+        const newUpvotes = new Set(userUpvotes);
+        if (newUpvotes.has(songId)) {
+          newUpvotes.delete(songId); // Remove vote
+        } else {
+          newUpvotes.add(songId); // Add vote
+        }
+    
+        setUserUpvotes(newUpvotes);
+        upvoteSong(songId, userId);
+      };
     // console.log("here we have queue", queue);
     function concatenateWithinLimit(text) {
         let result = "";
@@ -21,7 +35,7 @@ const Queue = ({handleVote, liked}) => {
     }
 
     return (
-        <div className="bg-white w-full h-fit flex flex-col gap-4 pb-8 pt-4 overflow-x-auto scrolll px-6 rounded-2xl">
+        <div className="bg-white w-full h-full flex flex-col gap-4 pb-8 pt-4 overflow-x-auto scrolll px-6 rounded-2xl">
             <div className="w-full flex justify-between items-center">
                         <h1 className="text-xl font-roboto font-semibold">Next in Row</h1> 
                         <div className="flex items-center gap-3">
@@ -35,31 +49,47 @@ const Queue = ({handleVote, liked}) => {
             </div>
 
             <div className="flex overflow-auto w-full gap-3 scrolll">
-            {queue.length > 0 ? <>
-                {queue.map((item, index) => (
-                    <div key={index} className="flex flex-col gap-4 border rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between">
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="min-w-[10vw] h-[13vh] rounded-xl overflow-hidden">
-                            <img src={item.thumbnail} alt="Preview Image" className="w-full h-full object-cover" />
-                            </div>
-                            <h1 className="text-xs font-semibold leading-none text-center">{concatenateWithinLimit(item.title)}</h1>
-                        </div>
+            {queue.length > 0 ? (
+        queue.map((item, index) => (
+          <div
+            key={index}
+            className="flex flex-col gap-4 border rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
+          >
+            {/* 🔥 Song Thumbnail & Title */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="min-w-[10vw] h-[13vh] rounded-xl overflow-hidden">
+                <img
+                  src={item.thumbnail}
+                  alt="Preview Image"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h1 className="text-xs font-semibold leading-none text-center">
+                {concatenateWithinLimit(item.title)}
+              </h1>
+            </div>
 
-                        <div className="flex items-center justify-between  w-full">
-                            <div className="flex  leading-none font-funnel items-end">
-                            <ChartNoAxesColumn size={20} className="text-gray-400" />
-                            <span>{item.upvoteCount === 0 ? "" : item.upvoteCount}</span>
-                            </div>
-                            <div className="flex gap-2">
-                            <div onClick={() => handleVote(item)} className={`p-1  rounded-md cursor-pointer transition-transform duration-200 active:scale-90  ${liked[item.streamId] ? "bg-blue-400" : ""}`}>
-                                <ChevronUp size={20} />
-                            </div> 
-                            </div>
-                        </div>
+            {/* 🔥 Vote Count & Upvote Button */}
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-1 text-gray-400">
+                <ChartNoAxesColumn size={20} />
+                <span>{item.upvoteCount > 0 ? item.upvoteCount : ""}</span>
+              </div>
 
-                    </div>
-                ))}
-            </> : <>No song in queue at the moment</>}
+              <button
+                onClick={() => handleUpvote(item.streamId)}
+                className={`px-2 py-1 rounded-md transition-transform duration-200 active:scale-90 text-white ${
+                  userUpvotes.has(item.streamId) ? "bg-green-500" : "bg-gray-500"
+                }`}
+              >
+                {userUpvotes.has(item.streamId) ? "Upvoted" : "Upvote"}
+              </button>
+            </div>
+          </div>
+        ))
+      ) : (
+        <>No song in queue at the moment</>
+      )}
             </div>
         </div>
     )

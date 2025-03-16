@@ -4,9 +4,13 @@ import { Slider } from "@/components/ui/slider";
 import { FastForward, Pause, Play, Rewind, SkipBack, SkipForward, Volume2, VolumeOff } from "lucide-react";
 import { useRef, useState } from "react";
 import ReactPlayer from "react-player"
+import { useWebSocket } from "../context/WebContext";
 
-const MusicPlayer = ({video, onClick}) => {
-    const [isPlaying, setIsPlaying] = useState(true);
+const MusicPlayer = ({isAdmin}) => {
+  const {nowPlaying, nextSong, prevSong} = useWebSocket()
+  console.log("now playing event happened", nowPlaying);
+
+  const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [mute, setMute] = useState(false);
@@ -26,7 +30,7 @@ const MusicPlayer = ({video, onClick}) => {
 
   const handleSongEnd = () => {
     setProgress(0); 
-    onClick(); 
+    nextSong(); 
   };
 
   const handleProgress = (state: { played: number; playedSeconds: number }) => {
@@ -45,12 +49,14 @@ const MusicPlayer = ({video, onClick}) => {
 
     // console.log("here dets", video);
     return (
-        <div className="flex flex-col gap-4 w-full h-full">
+
+        <>
+          {nowPlaying ? <div className="flex flex-col gap-4 w-full h-full ">
             <div className="flex flex-col justify-between h-full">
-            <div className="w-full h-[22vh] shadow-xl rounded-2xl overflow-hidden">
-                <ReactPlayer
+            <div className="w-full h-[30vh] shadow-xl rounded-2xl overflow-hidden">
+              <ReactPlayer
                     ref={playerRef}
-                    url={video.url}
+                    url={nowPlaying.url}
                     playing={isPlaying}
                     width="100%"
                     height="100%"
@@ -66,13 +72,13 @@ const MusicPlayer = ({video, onClick}) => {
                 />
             </div>
 
+
             <div className="space-y-1">
-                <h2 className="text-base font-semibold text-center leading-none font-roboto">{video.title}</h2>
+                <h2 className="text-base font-semibold text-center leading-none font-roboto">{nowPlaying.title}</h2>
             </div>
             </div>
 
         <div className="flex flex-col gap-2">
-            
             <div className="space-y-2">
                 <Slider
                     value={[progress]}
@@ -93,6 +99,9 @@ const MusicPlayer = ({video, onClick}) => {
                 {mute ? <VolumeOff className="h-6 w-6" /> : <Volume2 className="h-6 w-6" /> }
                 {/* <Volume2 className="h-6 w-6" /> */}
             </Button>
+            {isAdmin ? <Button onClick={prevSong} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
+                <SkipBack className="h-6 w-6" />
+            </Button> : ""}
             <Button
                 variant="ghost"
                 size="icon"
@@ -101,13 +110,29 @@ const MusicPlayer = ({video, onClick}) => {
             >
                 {isPlaying ? <Pause className="h-6 w-6 text-white" /> : <Play className="h-6 w-6 text-white" />}
             </Button>
-            <Button onClick={onClick} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
+            {isAdmin ? <Button onClick={nextSong} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
                 <SkipForward className="h-6 w-6" />
-            </Button>
+            </Button> : ""}
+
             </div>
 
         </div>
-      </div>
+        </div> : 
+        <div className="flex flex-col justify-between w-full h-full">
+          <img src="/fallback2.svg" alt="fallbackimage" className="w-full object-contain" />
+          <div className="w-full h-full flex items-center justify-center flex-col">
+            <span>show user name below swag and show details of room like name and code with copy button</span>
+            <button onClick={nextSong} className="py-2 px-6 hover:bg-black/80 transition-all duration-200 ease-in-out rounded-full border bg-black text-white font-semibold ">
+              Start streaming now
+              </button>
+            </div>
+        </div>
+        }
+      </>
+      // <div className="w-full h-full  flex flex-col rounded-2xl">
+      //   <button onClick={nextSong}>Play next</button>
+      //                                       <img src="/carddd.png" alt="card" className="w-full h-full object-cover" />
+      //                                   </div>
     )
 }
 

@@ -87,88 +87,206 @@ wss.on("connection", (ws) => {
 
       else if (data.type === "addSong" && roomId) {
         const song = data.song;
-        console.log("Song added:", song);
+        // console.log("Song added:", song);
 
         try {
           await redisClient.rPush(`queue:${roomId}`, JSON.stringify(song));
-          console.log(`Song added to Redis queue: ${song.title}`);
+          // console.log(`Song added to Redis queue: ${song.title}`);
+          
         } catch (error) {
           console.error("Error adding song to Redis:", error);
         }
 
+        const songs = await redisClient.lRange(`queue:${roomId}`, 0, -1);
+        const parsedSongs = songs.map((song) => JSON.parse(song));
+
         rooms.get(roomId)?.users.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({ type: "addSong", song }));
+            client.send(JSON.stringify({ type: "songQueue", queue: parsedSongs }));
           }
         });
       }
 
       else if (data.type === "voteUpdate" && roomId) {
-        console.log("Vote update received:", data);
-
+        // console.log("Vote update received:", data);
+      
         try {
-          const songs = await redisClient.lRange(`queue:${roomId}`, 0, -1);
-          let parsedQueue = songs.map((song) => JSON.parse(song));
-
-          parsedQueue = parsedQueue.map((song) =>
-            song.streamId === data.song.streamId ? { ...song, upvoteCount: data.upvoteCount } : song
-          );
-
-          const highestVotedSong = parsedQueue.reduce((prev, curr) =>
-            prev.upvoteCount > curr.upvoteCount ? prev : curr, parsedQueue[0]
-          );
-
-          await redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
-
+          if (!data.songId || !data.voteType || !data.userId) {
+            console.error("Error: songId, userId, or voteType is missing in the received data:", data);
+            return;
+          }
+      
+          const userVoteKey = `vote:${roomId}:${data.songId}:${data.userId}`;
+          const songQueueKey = `queue:${roomId}`;
+      
+          // Fetch user's existing vote status
+          const existingVote = await redisClient.get(userVoteKey);
+      
+          // Fetch and parse song queue
+          let songs = await redisClient.lRange(songQueueKey, 0, -1);
+          
+          // Create a map to track unique songs by streamId to prevent duplicates
+          const uniqueSongsMap = new Map();
+          
+          // First pass - parse all songs and keep only the last occurrence of each songId
+          songs.forEach(songString => {
+            const song = JSON.parse(songString);
+            uniqueSongsMap.set(song.streamId, song);
+          });
+          
+          // Convert map back to array
+          let parsedQueue = Array.from(uniqueSongsMap.values());
+      
+          let updatedQueue = parsedQueue.map(song => {
+            if (song.streamId === data.songId) {
+              let newUpvoteCount = song.upvoteCount || 0;
+      
+              // If user has already voted this way, they're canceling their vote
+              if (existingVote === data.voteType) {
+                // Cancel existing vote
+                newUpvoteCount += (data.voteType === "upvote") ? -1 : 0;
+                redisClient.del(userVoteKey);
+              } 
+              // If user is changing their vote (upvote to downvote or vice versa)
+              else if (existingVote && existingVote !== data.voteType) {
+                // If changing from downvote to upvote, add 1
+                if (data.voteType === "upvote") {
+                  newUpvoteCount += 1;
+                }
+                // If changing from upvote to downvote, subtract 1
+                else {
+                  newUpvoteCount = Math.max(newUpvoteCount - 1, 0);
+                }
+                redisClient.set(userVoteKey, data.voteType);
+              } 
+              // User hasn't voted before
+              else {
+                newUpvoteCount += (data.voteType === "upvote") ? 1 : 0;
+                redisClient.set(userVoteKey, data.voteType);
+              }
+      
+              return { ...song, upvoteCount: newUpvoteCount };
+            }
+            return song;
+          });
+      
+          // Use a multi/exec transaction to ensure atomic updates
+          const multi = redisClient.multi();
+          multi.del(songQueueKey);
+          
+          for (const song of updatedQueue) {
+            multi.rPush(songQueueKey, JSON.stringify(song));
+          }
+          
+          // Execute all commands atomically
+          await multi.exec();
+      
+          // Find highest voted song
+          let highestVotedSong = updatedQueue.length
+            ? updatedQueue.reduce((prev, curr) =>
+                (prev?.upvoteCount || 0) > (curr?.upvoteCount || 0) ? prev : curr
+              )
+            : null;
+      
+          if (highestVotedSong) {
+            await redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
+          }
+      
+          // Broadcast updated queue and now playing song
           rooms.get(roomId)?.users.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: "voteUpdate", queue: parsedQueue }));
-              client.send(JSON.stringify({ type: "nowPlaying", song: highestVotedSong }));
+              client.send(JSON.stringify({ type: "voteUpdate", queue: updatedQueue }));
+              // if (highestVotedSong) {
+              //   client.send(JSON.stringify({ type: "nowPlaying", song: highestVotedSong }));
+              // }
             }
           });
-
-          console.log("New Now Playing:", highestVotedSong);
+      
+          // console.log("Updated Queue:", updatedQueue);
+          // console.log("New Now Playing:", highestVotedSong);
         } catch (error) {
           console.error("Error updating votes:", error);
         }
       }
 
-      else if (data.type === "updateQueue" && roomId) {
-        console.log("Updating queue data:", data);
+      
+      else if(data.type === "nextSong" && roomId) {
+        console.log("Next song request received");
 
         try {
-          const songs = await redisClient.lRange(`queue:${roomId}`, 0, -1);
-          let parsedQueue = songs.map((song) => JSON.parse(song));
-
-          parsedQueue = parsedQueue.filter(song => song.streamId !== data.song.currentVideo.id);
-
-          const nextSong = parsedQueue.length > 0
-            ? parsedQueue.reduce((prev, curr) => (prev.upvoteCount > curr.upvoteCount ? prev : curr), parsedQueue[0])
-            : null;
-
-          if (nextSong) {
-            await redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(nextSong));
-          }
-
-          rooms.get(roomId)?.users.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: "songQueue", queue: parsedQueue }));
-              if (nextSong) {
-                client.send(JSON.stringify({ type: "nowPlaying", song: nextSong }));
-              }
+            const songQueueKey = `queue:${roomId}`;
+            const historyKey = `history:${roomId}`;
+            const nowPlayingKey = `nowPlaying:${roomId}`;
+            
+            // Get current song to add to history
+            const currentSongStr = await redisClient.get(nowPlayingKey);
+            if (currentSongStr) {
+                // Add current song to history (push to front)
+                await redisClient.lPush(historyKey, currentSongStr);
+                // Keep only the last 5 songs in history
+                await redisClient.lTrim(historyKey, 0, 4);
             }
-          });
-
-          console.log("Updated Queue:", parsedQueue);
-          console.log("Next Song Playing:", nextSong);
+            
+            // Get all songs from queue
+            const songs = await redisClient.lRange(songQueueKey, 0, -1);
+            const parsedSongs = songs.map(song => JSON.parse(song));
+            
+            if (parsedSongs.length > 0) {
+                // Find song with highest upvotes
+                const mostUpvotedSong = parsedSongs.reduce((prev, curr) => 
+                    (prev?.upvoteCount || 0) > (curr?.upvoteCount || 0) ? prev : curr, parsedSongs[0]);
+                
+                if (mostUpvotedSong) {
+                    // Set as now playing
+                    await redisClient.set(nowPlayingKey, JSON.stringify(mostUpvotedSong));
+                    
+                    // Remove the song from queue
+                    const updatedQueue = parsedSongs.filter(song => 
+                        song.streamId !== mostUpvotedSong.streamId);
+                    
+                    // Update queue in Redis
+                    const multi = redisClient.multi();
+                    multi.del(songQueueKey);
+                    
+                    for (const song of updatedQueue) {
+                        multi.rPush(songQueueKey, JSON.stringify(song));
+                    }
+                    
+                    await multi.exec();
+                    
+                    // Broadcast updates to all clients
+                    rooms.get(roomId)?.users.forEach((client) => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(JSON.stringify({ 
+                                type: "nowPlaying", 
+                                song: mostUpvotedSong 
+                            }));
+                            client.send(JSON.stringify({ 
+                                type: "songQueue", 
+                                queue: updatedQueue 
+                            }));
+                        }
+                    });
+                    
+                    console.log(`Next song now playing: ${mostUpvotedSong.title}`);
+                }
+            } else {
+                console.log("No songs in queue");
+            }
         } catch (error) {
-          console.error("Error updating queue:", error);
+            console.error("Error handling next song:", error);
         }
+      }
+
+      else if(data.type === "prevSong" && roomId){
+        console.log("event trigger for previous song")
       }
 
     } catch (error) {
       console.error("Failed to parse incoming message:", error);
     }
+
   });
 
   ws.on("close", () => {

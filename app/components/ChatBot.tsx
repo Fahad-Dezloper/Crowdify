@@ -4,8 +4,16 @@ import { useState } from "react";
 import { useWebSocket } from "../context/WebContext";
 
 const ChatBot = () => {
-  const { messages, input, setInput, sendMessage } = useWebSocket();
-    // const [messages, setMessages] = useState<string[]>([]);
+  const { messages, sendMessage } = useWebSocket();
+  const [input, setInput] = useState("");
+  console.log("messages here", messages);
+    const handleSend = () => {
+      if (input.trim()) {
+        sendMessage(input, "User");
+        setInput("");
+      }
+    };
+    
     return (
         <div className="w-full h-full  overflow-y-auto">
             <div className="bg-white w-full p-3 h-full flex flex-col justify-between rounded-2xl">
@@ -26,7 +34,7 @@ const ChatBot = () => {
         onChange={(e) => setInput(e.target.value)}
         className="bg-gray-400 w-full h-full rounded-2xl px-5 outline-none"
       />
-      <button onClick={sendMessage} className="p-3 bg-black rounded-full outline-none text-white"><ChevronUp /></button>
+      <button onClick={handleSend} className="p-3 bg-black rounded-full outline-none text-white"><ChevronUp /></button>
       </div>
 
     </div>

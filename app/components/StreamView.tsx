@@ -17,35 +17,12 @@ import TopBar from "./Topbar";
 import ChatBot from "./ChatBot";
 import { useWebSocket } from "../context/WebContext";
 
-// const REFRESH_INTERVAL_MS = 10 * 1000;
-
-// interface Video {
-//     "id": string,
-//     "type": string,
-//     "url": string,
-//     "extractedId": string,
-//     "title": string,
-//     "smallImg": string,
-//     "bigImg": string,
-//     "active": boolean,
-//     "userId": string,
-//     "upvotes": number,
-//     "haveUpvoted": boolean
-// }
-
-// interface StreamViewProps {
-//     creatorId: string;
-//     playVideo: boolean;
-//     // onVote: () => void;
-//     role: string;
-// }
-
 const StreamView = ({creatorId, isAdmin, roomId}) => {
     const [arr, setArr] = useState([])
     const [likedSongs, setLikedSongs] = useState({});
     // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
-    const [currentVideo, setCurrentVideo] = useState(null);
+    const [currentVideo, setCurrentVideo] = useState(true);
     const [isUpvote, setIsUpvote] = useState(false);
     const [playNextLoader, setPlayNextLoader] = useState(false);
     const {socket} = useWebSocket();
@@ -136,8 +113,6 @@ const PlayNext = async () => {
                     }
                 }
 
-
-                
                 //next most upvoted song
                 const data = await axios.get('/api/streams/next', {
                     params: {
@@ -165,8 +140,7 @@ const PlayNext = async () => {
 
 
                 <div className="w-full h-[50vh] flex items-center scrolll justify-center px-6 pt-1 pb-2">
-                    <Queue handleVote={handleVote} liked={likedSongs} />
-                    {/* queue={arr} */}
+                    <Queue />
                 </div>
 
 
@@ -174,15 +148,8 @@ const PlayNext = async () => {
                     <ChatBot />
 
                     <div className="w-[40vw] h-full">
-                        <div className="w-full h-full bg-[#e6e6e6] rounded-2xl p-5 px-8" >
-                            {currentVideo ? (
-                                <MusicPlayer video={currentVideo} onClick={() => PlayNext()} />
-                                        ) : 
-                                        (
-                                        <div className="w-full h-full  flex flex-col rounded-2xl">
-                                            <img src="/carddd.png" alt="card" className="w-full h-full object-cover" />
-                                        </div>
-                                    )}
+                        <div className="w-full h-full bg-white rounded-2xl py-5 px-6" >
+                                <MusicPlayer isAdmin={isAdmin} />
                             </div>
                         </div>
                     </div>

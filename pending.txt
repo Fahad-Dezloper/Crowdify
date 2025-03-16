@@ -5,6 +5,11 @@ votes are not being stored in redis and updated on refresh going away when refre
 add admin actions and user controls
 
 
+// add previous song play functionality in index.ts ws
+// add copy code
+// launch it
+
+
 
 
 //create a singleton inside - db.ts

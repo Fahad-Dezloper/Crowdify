@@ -43,7 +43,7 @@ export async function POST(req: NextRequest){
             },
         });
 
-        console.log("Room Created on 2nd:", roomUser);        
+        // console.log("Room Created on 2nd:", roomUser);        
 
         return NextResponse.json({
             message: "Done!"
