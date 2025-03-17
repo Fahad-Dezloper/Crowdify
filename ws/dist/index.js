@@ -61,7 +61,7 @@ const rooms = new Map();
 wss.on("connection", (ws) => {
     let roomId = null;
     ws.on("message", (message) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         try {
             const data = JSON.parse(message.toString());
             if (data.type === "join") {
@@ -71,10 +71,14 @@ wss.on("connection", (ws) => {
                     return;
                 }
                 if (!rooms.has(roomId)) {
-                    rooms.set(roomId, { users: new Set() });
+                    rooms.set(roomId, { users: new Set(), chatPaused: false, allowSongAdd: false });
                 }
                 (_b = rooms.get(roomId)) === null || _b === void 0 ? void 0 : _b.users.add(ws);
                 console.log(`User joined room: ${roomId}`);
+                const chatPaused = ((_c = rooms.get(roomId)) === null || _c === void 0 ? void 0 : _c.chatPaused) || false;
+                ws.send(JSON.stringify({ type: "chatStatus", paused: chatPaused }));
+                const allowSongAdd = ((_d = rooms.get(roomId)) === null || _d === void 0 ? void 0 : _d.chatPaused) || false;
+                ws.send(JSON.stringify({ type: "allowSongAdd", paused: allowSongAdd }));
                 try {
                     const messages = yield redisClient.lRange(`chat:${roomId}`, 0, -1);
                     messages.reverse().forEach((msg) => {
@@ -106,7 +110,15 @@ wss.on("connection", (ws) => {
                 const messageData = JSON.stringify({ text: data.text, sender: data.sender });
                 yield redisClient.lPush(`chat:${roomId}`, messageData);
                 yield redisClient.lTrim(`chat:${roomId}`, 0, 49);
-                (_c = rooms.get(roomId)) === null || _c === void 0 ? void 0 : _c.users.forEach((client) => {
+                const room = rooms.get(roomId);
+                if (room === null || room === void 0 ? void 0 : room.chatPaused) {
+                    ws.send(JSON.stringify({
+                        type: "chatError",
+                        message: "Chat is currently paused by the room admin"
+                    }));
+                    return;
+                }
+                (_e = rooms.get(roomId)) === null || _e === void 0 ? void 0 : _e.users.forEach((client) => {
                     if (client.readyState === ws_1.WebSocket.OPEN) {
                         client.send(JSON.stringify({ type: "message", text: data.text, sender: data.sender }));
                     }
@@ -124,7 +136,7 @@ wss.on("connection", (ws) => {
                 }
                 const songs = yield redisClient.lRange(`queue:${roomId}`, 0, -1);
                 const parsedSongs = songs.map((song) => JSON.parse(song));
-                (_d = rooms.get(roomId)) === null || _d === void 0 ? void 0 : _d.users.forEach((client) => {
+                (_f = rooms.get(roomId)) === null || _f === void 0 ? void 0 : _f.users.forEach((client) => {
                     if (client.readyState === ws_1.WebSocket.OPEN) {
                         client.send(JSON.stringify({ type: "addSong", song }));
                         client.send(JSON.stringify({ type: "songQueue", queue: parsedSongs }));
@@ -199,7 +211,7 @@ wss.on("connection", (ws) => {
                         yield redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
                     }
                     // Broadcast updated queue and now playing song
-                    (_e = rooms.get(roomId)) === null || _e === void 0 ? void 0 : _e.users.forEach((client) => {
+                    (_g = rooms.get(roomId)) === null || _g === void 0 ? void 0 : _g.users.forEach((client) => {
                         if (client.readyState === ws_1.WebSocket.OPEN) {
                             client.send(JSON.stringify({ type: "voteUpdate", queue: updatedQueue }));
                             // if (highestVotedSong) {
@@ -247,7 +259,7 @@ wss.on("connection", (ws) => {
                             }
                             yield multi.exec();
                             // Broadcast updates to all clients
-                            (_f = rooms.get(roomId)) === null || _f === void 0 ? void 0 : _f.users.forEach((client) => {
+                            (_h = rooms.get(roomId)) === null || _h === void 0 ? void 0 : _h.users.forEach((client) => {
                                 if (client.readyState === ws_1.WebSocket.OPEN) {
                                     client.send(JSON.stringify({
                                         type: "nowPlaying",
@@ -272,6 +284,43 @@ wss.on("connection", (ws) => {
             }
             else if (data.type === "prevSong" && roomId) {
                 console.log("event trigger for previous song");
+            }
+            else if (data.type === "chatpause" && roomId) {
+                const room = rooms.get(roomId);
+                if (!room)
+                    return;
+                console.log("chat pause", data);
+                console.log("chat pause status", room === null || room === void 0 ? void 0 : room.chatPaused);
+                room.chatPaused = !room.chatPaused;
+                yield redisClient.set(`chatStatus:${roomId}`, room.chatPaused ? "paused" : "active");
+                room.users.forEach((client) => {
+                    if (client.readyState === ws_1.WebSocket.OPEN) {
+                        client.send(JSON.stringify({
+                            type: "chatStatus",
+                            paused: room.chatPaused,
+                        }));
+                    }
+                });
+                console.log(`Chat ${room.chatPaused ? "paused" : "resumed"} in room ${roomId}`);
+            }
+            else if (data.type === "allowSongAdd" && roomId) {
+                const room = rooms.get(roomId);
+                if (!room)
+                    return;
+                console.log("allowSongAdd event", data);
+                console.log("allowSongAdd add status before", room === null || room === void 0 ? void 0 : room.allowSongAdd);
+                room.allowSongAdd = !room.allowSongAdd;
+                console.log("allowSongAdd add status after", room === null || room === void 0 ? void 0 : room.allowSongAdd);
+                yield redisClient.set(`allowSongAdd:${roomId}`, room.allowSongAdd ? "paused" : "active");
+                room.users.forEach((client) => {
+                    if (client.readyState === ws_1.WebSocket.OPEN) {
+                        client.send(JSON.stringify({
+                            type: "allowSongAdd",
+                            paused: room.allowSongAdd,
+                        }));
+                    }
+                });
+                console.log(`Chat ${room.allowSongAdd ? "paused" : "resumed"} in room ${roomId}`);
             }
         }
         catch (error) {

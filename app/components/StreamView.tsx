@@ -145,7 +145,7 @@ const PlayNext = async () => {
 
 
                 <div className="flex w-full h-full overflow-hidden px-6 py-5 gap-4">            
-                    <ChatBot />
+                    <ChatBot isAdmin={isAdmin} />
 
                     <div className="w-[40vw] h-full">
                         <div className="w-full h-full bg-white rounded-2xl py-5 px-6" >

@@ -20,6 +20,8 @@ redisClient.connect().catch(console.error);
 
 interface Room {
   users: Set<WebSocket>;
+  chatPaused: boolean;
+  allowSongAdd: boolean; 
 }
 
 const rooms = new Map<string, Room>();
@@ -40,11 +42,17 @@ wss.on("connection", (ws) => {
         }
 
         if (!rooms.has(roomId)) {
-          rooms.set(roomId, { users: new Set() });
+          rooms.set(roomId, { users: new Set(), chatPaused: false, allowSongAdd: false });
         }
 
         rooms.get(roomId)?.users.add(ws);
         console.log(`User joined room: ${roomId}`);
+
+        const chatPaused = rooms.get(roomId)?.chatPaused || false;
+        ws.send(JSON.stringify({ type: "chatStatus", paused: chatPaused }));
+
+        const allowSongAdd = rooms.get(roomId)?.chatPaused || false;
+        ws.send(JSON.stringify({ type: "allowSongAdd", paused: allowSongAdd }));
 
         try {
           const messages = await redisClient.lRange(`chat:${roomId}`, 0, -1);
@@ -77,6 +85,15 @@ wss.on("connection", (ws) => {
         const messageData = JSON.stringify({ text: data.text, sender: data.sender });
         await redisClient.lPush(`chat:${roomId}`, messageData);
         await redisClient.lTrim(`chat:${roomId}`, 0, 49);
+        const room = rooms.get(roomId);
+
+        if (room?.chatPaused) {
+          ws.send(JSON.stringify({ 
+            type: "chatError", 
+            message: "Chat is currently paused by the room admin"
+          }));
+          return;
+        }
 
         rooms.get(roomId)?.users.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
@@ -110,7 +127,6 @@ wss.on("connection", (ws) => {
 
       else if (data.type === "voteUpdate" && roomId) {
         // console.log("Vote update received:", data);
-      
         try {
           if (!data.songId || !data.voteType || !data.userId) {
             console.error("Error: songId, userId, or voteType is missing in the received data:", data);
@@ -209,8 +225,7 @@ wss.on("connection", (ws) => {
           console.error("Error updating votes:", error);
         }
       }
-
-      
+ 
       else if(data.type === "nextSong" && roomId) {
         console.log("Next song request received");
 
@@ -281,6 +296,51 @@ wss.on("connection", (ws) => {
 
       else if(data.type === "prevSong" && roomId){
         console.log("event trigger for previous song")
+      }
+
+      else if (data.type === "chatpause" && roomId) {
+        const room = rooms.get(roomId);
+        if (!room) return;
+        
+        console.log("chat pause", data)
+        console.log("chat pause status", room?.chatPaused)
+        room.chatPaused = !room.chatPaused;
+        
+        await redisClient.set(`chatStatus:${roomId}`, room.chatPaused ? "paused" : "active");
+        
+        room.users.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ 
+              type: "chatStatus",
+              paused: room.chatPaused,
+            }));
+          }
+        });
+        
+        console.log(`Chat ${room.chatPaused ? "paused" : "resumed"} in room ${roomId}`);
+      }
+
+      else if (data.type === "allowSongAdd" && roomId) {
+        const room = rooms.get(roomId);
+        if (!room) return;
+        
+        console.log("allowSongAdd event", data)
+        console.log("allowSongAdd add status before", room?.allowSongAdd)
+        room.allowSongAdd = !room.allowSongAdd;
+        console.log("allowSongAdd add status after", room?.allowSongAdd)
+        
+        await redisClient.set(`allowSongAdd:${roomId}`, room.allowSongAdd ? "paused" : "active");
+        
+        room.users.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ 
+              type: "allowSongAdd",
+              paused: room.allowSongAdd,
+            }));
+          }
+        });
+        
+        console.log(`Chat ${room.allowSongAdd ? "paused" : "resumed"} in room ${roomId}`);
       }
 
     } catch (error) {

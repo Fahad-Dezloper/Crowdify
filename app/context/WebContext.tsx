@@ -21,6 +21,8 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     const [roomData, setRoomData] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [chatPaused, setChatPaused] = useState(false);
+    const [songAddStatus, setSongAddStatus] = useState(false);
     const [roomIdd, setRoomIdd] = useState<string | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
 
@@ -68,9 +70,14 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
                 console.log("data for now playing", data);
                 setNowPlaying(data.song);
                 break;
-              // case "nowPlaying":
-              //   setNowPlaying(data.song);
-              //   break;
+              case "chatStatus":
+                console.log("data for chat control", data);
+                setChatPaused(data.paused);
+                break;
+              case "allowSongAdd":
+                console.log("data for allowSongAdd", data);
+                setSongAddStatus(data.paused);
+                break;
               default:
               console.log("Unknown Websocket event:", data);
             }
@@ -172,10 +179,29 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
         })
       );
     }
-    
 
+    const messageControl = () => {
+      console.log("called meesage control")
+      if(!userId) return;
+      wsRef.current?.send(
+        JSON.stringify({
+          type: "chatpause"
+        })
+      )
+    }
+
+    const allowSongAdd = () => {
+      console.log("called allowSongAdd")
+      if(!userId) return;
+      wsRef.current?.send(
+        JSON.stringify({
+          type: "allowSongAdd"
+        })
+      )
+    }
+    
       return (
-        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong }}>
+        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus }}>
           {children}
         </WebSocketContext.Provider>
       );
