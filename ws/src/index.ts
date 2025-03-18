@@ -49,9 +49,11 @@ wss.on("connection", (ws) => {
         console.log(`User joined room: ${roomId}`);
 
         const chatPaused = rooms.get(roomId)?.chatPaused || false;
+        console.log("status of chatPaused", chatPaused)
         ws.send(JSON.stringify({ type: "chatStatus", paused: chatPaused }));
 
-        const allowSongAdd = rooms.get(roomId)?.chatPaused || false;
+        const allowSongAdd = rooms.get(roomId)?.allowSongAdd || false;
+        console.log("status of chatPaused", allowSongAdd)
         ws.send(JSON.stringify({ type: "allowSongAdd", paused: allowSongAdd }));
 
         try {

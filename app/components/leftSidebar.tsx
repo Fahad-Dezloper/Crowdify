@@ -3,19 +3,25 @@ import { Input } from "@/components/ui/input"
 import LiteYouTubeEmbed from 'react-lite-youtube-embed'
 import { useWebSocket } from "../context/WebContext";
 import Switch from "@/components/fancy/Button1";
+import CopyButton from "@/components/fancy/CopytoClipboard";
 
 const LeftSidebar = ({addToQueue, inputLink, YT_REGEX, setInputLink, isAdmin, roomId}) => {
     const { songAddStatus } = useWebSocket();
-    console.log("left sidebar",songAddStatus )
+    console.log("left sidebar song add status",songAddStatus )
 
     return (
         <div className="min-w-[22vw] h-full py-5 px-3">
             <div className="min-w-[22vw] rounded-2xl flex flex-col bg-white h-full overflow-y-auto px-4">
                 <h1 className="font-funnel text-4xl text-center py-8 font-semibold">Crowdify</h1>
-                {isAdmin ? "Admin" : "User"}
-                <span>staus is {songAddStatus ? "yes" : "no"}</span>
+                {/* <span className="w-full flex justify-center items-center font-funnel text-xl">{isAdmin ? "Admin" : "User"}</span> */}
+                {/* <span>staus is {songAddStatus ? "yes" : "no"}</span> */}
+                <div className="w-full flex flex-row-reverse justify-between items-center  min-h-[80px]">
                 {isAdmin ? <Switch /> : ""}
-                <span>{roomId}</span>
+                {/* <span>{roomId}</span> */}
+                <div className="py-2">
+                    <CopyButton roomId={roomId} />
+                </div>
+                </div>
                 <div className="flex flex-col gap-2">
                 
                 {songAddStatus ? <>

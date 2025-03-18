@@ -76,8 +76,10 @@ wss.on("connection", (ws) => {
                 (_b = rooms.get(roomId)) === null || _b === void 0 ? void 0 : _b.users.add(ws);
                 console.log(`User joined room: ${roomId}`);
                 const chatPaused = ((_c = rooms.get(roomId)) === null || _c === void 0 ? void 0 : _c.chatPaused) || false;
+                console.log("status of chatPaused", chatPaused);
                 ws.send(JSON.stringify({ type: "chatStatus", paused: chatPaused }));
-                const allowSongAdd = ((_d = rooms.get(roomId)) === null || _d === void 0 ? void 0 : _d.chatPaused) || false;
+                const allowSongAdd = ((_d = rooms.get(roomId)) === null || _d === void 0 ? void 0 : _d.allowSongAdd) || false;
+                console.log("status of chatPaused", allowSongAdd);
                 ws.send(JSON.stringify({ type: "allowSongAdd", paused: allowSongAdd }));
                 try {
                     const messages = yield redisClient.lRange(`chat:${roomId}`, 0, -1);

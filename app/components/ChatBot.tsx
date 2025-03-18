@@ -7,7 +7,7 @@ import Switch from "@/components/fancy/Button";
 const ChatBot = ({isAdmin}) => {
   const { messages, sendMessage, messageControl, chatPaused } = useWebSocket();
   const [input, setInput] = useState("");
-  console.log("chat paused fn", chatPaused)
+  // console.log("chat paused fn", chatPaused)
     const handleSend = () => {
       if (input.trim()) {
         sendMessage(input, "User");

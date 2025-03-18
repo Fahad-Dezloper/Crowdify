@@ -5,10 +5,14 @@ votes are not being stored in redis and updated on refresh going away when refre
 add admin actions and user controls
 
 
-// add previous song play functionality in index.ts ws
+// add previous song play functionality in index.ts ws -- later now now
+
+//sync the timestamp with button
+// improve the UI now 
 // add copy code
 // launch it
-// add proper user and admin control
+
+// test and make it ready for deployment
 
 
 

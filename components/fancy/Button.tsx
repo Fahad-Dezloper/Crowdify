@@ -4,7 +4,7 @@ import React, { useState } from "react";
 const Switch = () => {
   const [checked, setChecked] = useState(false);
   const { messageControl, chatPaused } = useWebSocket();
-  console.log("from switch component", chatPaused);
+  // console.log("from switch component", chatPaused);
 
   return (
     <div className="relative aspect-[292/142] h-7">

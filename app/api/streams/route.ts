@@ -2,39 +2,49 @@ import { prismaClient } from "@/app/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import {z} from 'zod'
 // @ts-ignore
-import youtubesearchapi from 'youtube-search-api'
+// import youtubesearchapi from 'youtube-search-api'
+import { Client, MusicClient } from "youtubei";
 import { YT_REGEX } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 
+const youtube = new Client();
+const music = new MusicClient();
+
+
 const CreateStreamSchema = z.object({
-    creatorId: z.string(),
+    creatorId: z.string() || null,
     url: z.string(),
     roomId: z.string()
 })
+
+function extractVideoId(url) {
+    const match = url.match(/[?&]v=([^&]+)/);
+    return match ? match[1] : null;
+  }
 
 export async function POST(req: NextRequest) {
     try {
         // ✅ First, log the raw request body before parsing
         const rawBody = await req.json();
-        // console.log("Received raw data:", rawBody);
+        console.log("Received raw data:", rawBody);
 
         // ✅ Now parse it
-        const data = CreateStreamSchema.parse(rawBody);
+        const data = rawBody;
 
-        if (!data.url.match(YT_REGEX)) {
-            return NextResponse.json({ message: "Wrong URL format" }, { status: 411 });
-        }
+        // if (!data.url.match(YT_REGEX)) {
+        //     return NextResponse.json({ message: "Wrong URL format" }, { status: 411 });
+        // }
 
         // console.log("reached here to add");
 
-        const extractedId = data.url.split("?v=")[1];
-        const res = await youtubesearchapi.GetVideoDetails(extractedId);
-        // console.log("YouTube API Response:", res);
+        const extractedId = extractVideoId(data.url);
+        const res = await youtube.getVideo(extractedId);
+        console.log("YouTube API Response:", res);
 
-        const thumbnails = res.thumbnail.thumbnails;
+        // const thumbnails = res.thumbnail.thumbnails;
         // console.log("data thumb", thumbnails);
 
-        thumbnails.sort((a: { width: number }, b: { width: number }) => (a.width < b.width ? -1 : 1));
+        // thumbnails.sort((a: { width: number }, b: { width: number }) => (a.width < b.width ? -1 : 1));
 
         const stream = await prismaClient.stream.create({
             data: {
@@ -43,10 +53,10 @@ export async function POST(req: NextRequest) {
                 type: "Youtube",
                 title: res.title ?? "Can't find your song",
                 smallImg:
-                    (thumbnails.length > 1 ? thumbnails[thumbnails.length - 2].url : thumbnails[thumbnails.length - 1].url) ??
+                    res.thumbnails[0].url ??
                     "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
                 bigImg:
-                    thumbnails[thumbnails.length - 1].url ??
+                    res.thumbnails[res.thumbnails.length - 1].url ??
                     "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
                 room: {
                     connect: {
@@ -56,7 +66,7 @@ export async function POST(req: NextRequest) {
             }
         });
 
-        // console.log("Stream successfully added:", stream);
+        console.log("Stream successfully added:", stream);
 
         return NextResponse.json({
             message: "Added Stream",

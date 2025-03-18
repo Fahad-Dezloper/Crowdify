@@ -5,8 +5,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ChevronRight } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useWebSocket } from "../context/WebContext";
 
 const TopBar = ({userId}) => {
+    const {userDets} = useWebSocket();
+    // console.log("from topbar", userDets);
+
+
     function copyToClipboard(){
         const value = `http://localhost:3000/room/${userId}`;
             navigator.clipboard.writeText(value)
@@ -37,7 +42,7 @@ const TopBar = ({userId}) => {
                     <Popover>
                         <PopoverTrigger>
                         <Avatar>
-                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                            <AvatarImage src={`${userDets?.data ? userDets.data.user.image : "https://github.com/shadcn.png"}`} alt="@shadcn" />
                             <AvatarFallback>FK</AvatarFallback>
                         </Avatar>
                         </PopoverTrigger>

@@ -7,7 +7,7 @@ const Queue = () => {
     const { queue, upvoteSong, userUpvotes, setUserUpvotes, userId } = useWebSocket();
     console.log("haa bhai liked", queue);
     const handleUpvote = (songId) => {
-        console.log("called");
+        // console.log("called");
         if (!songId || !userId) return;
     
         const newUpvotes = new Set(userUpvotes);
@@ -22,14 +22,15 @@ const Queue = () => {
       };
     // console.log("here we have queue", queue);
     function concatenateWithinLimit(text) {
-        let result = "";
-        let count = 0;
-    
-        for (let char of text) {
-            if (char !== " ") count++;
-            if (count > 26) break;
-            result += char;
-        }
+      let count = 0;
+      let result = "";
+      let safeText = String(text);
+      
+      for (let char of safeText) {
+          if (char !== " ") count++;
+          if (count > 26) break;
+          result += char;
+      }
     
         return result;
     }

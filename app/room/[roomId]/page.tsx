@@ -19,7 +19,7 @@ const RoomPage = () => {
 
   useEffect(() => {
     if (roomId) {
-      console.log("roomId.roomId", roomId);
+      // console.log("roomId.roomId", roomId);
       setRoomIdd(Array.isArray(roomId) ? roomId[0] : roomId);
     }
     fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId);

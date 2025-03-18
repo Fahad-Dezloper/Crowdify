@@ -7,7 +7,7 @@ import ReactPlayer from "react-player"
 import { useWebSocket } from "../context/WebContext";
 
 const MusicPlayer = ({isAdmin}) => {
-  const {nowPlaying, nextSong, prevSong} = useWebSocket()
+  const {nowPlaying, nextSong, prevSong, userDets} = useWebSocket()
   console.log("now playing event happened", nowPlaying);
 
   const [isPlaying, setIsPlaying] = useState(true);
@@ -99,9 +99,9 @@ const MusicPlayer = ({isAdmin}) => {
                 {mute ? <VolumeOff className="h-6 w-6" /> : <Volume2 className="h-6 w-6" /> }
                 {/* <Volume2 className="h-6 w-6" /> */}
             </Button>
-            {isAdmin ? <Button onClick={prevSong} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
+            {/* {isAdmin ? <Button onClick={prevSong} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
                 <SkipBack className="h-6 w-6" />
-            </Button> : ""}
+            </Button> : ""} */}
             <Button
                 variant="ghost"
                 size="icon"
@@ -119,9 +119,13 @@ const MusicPlayer = ({isAdmin}) => {
         </div>
         </div> : 
         <div className="flex flex-col justify-between w-full h-full">
-          <img src="/fallback2.svg" alt="fallbackimage" className="w-full object-contain" />
+          <div className="relative border-2 shadow-2xl rounded-lg">
+            <img src="/fallback2.svg" alt="fallbackimage" className="w-full object-contain" />
+            <span className="absolute bottom-8 left-[35%] font-funnel font-black text-3xl text-blue-400">{userDets ? userDets.data.user.name.split(" ")[0] : "⭐"}
+            </span>
+          </div>
           <div className="w-full h-full flex items-center justify-center flex-col">
-            <span>show user name below swag and show details of room like name and code with copy button</span>
+            {/* <span>{userDets.data.user.name}</span> */}
             <button onClick={nextSong} className="py-2 px-6 hover:bg-black/80 transition-all duration-200 ease-in-out rounded-full border bg-black text-white font-semibold ">
               Start streaming now
               </button>

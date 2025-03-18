@@ -21,16 +21,17 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     const [roomData, setRoomData] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [userDets, setUserDets] = useState(null);
     const [chatPaused, setChatPaused] = useState(false);
     const [songAddStatus, setSongAddStatus] = useState(false);
     const [roomIdd, setRoomIdd] = useState<string | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
 
-    console.log("response from roomId", roomId);
+    // console.log("response from roomId", roomId);
 
     const fetchDets = async () => {
-        const res = await fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId);
-        console.log("res from /api/room:-", res);
+        const res = await fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId, setUserDets);
+        // console.log("res from /api/room:-", res);
         setRoomData(res);
     }
 
@@ -58,7 +59,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
             console.log("data rec for sending in ws: ", data);
             switch (data.type){
               case "message":
-                console.log("message vala data", data);
+                // console.log("message vala data", data);
                 setMessages((prev) => [...prev, data.text]);
                 break;
               case "songQueue":
@@ -67,11 +68,11 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
               case "voteUpdate":
                 setQueue(data.queue);
               case "nowPlaying":
-                console.log("data for now playing", data);
+                // console.log("data for now playing", data);
                 setNowPlaying(data.song);
                 break;
               case "chatStatus":
-                console.log("data for chat control", data);
+                // console.log("data for chat control", data);
                 setChatPaused(data.paused);
                 break;
               case "allowSongAdd":
@@ -81,7 +82,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
               default:
               console.log("Unknown Websocket event:", data);
             }
-            console.log("data rec for sending in ws: ", data);
+            // console.log("data rec for sending in ws: ", data);
             // console.log('message received');
           } catch (error) {
             console.error("Error parsing WebSocket message:", error);
@@ -117,7 +118,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     };
   
     const upvoteSong = (songId, userId) => {
-      console.log("here yo wassup", songId, "here i am", userId);
+      // console.log("here yo wassup", songId, "here i am", userId);
       
       if (!songId || !userId) return;
     
@@ -125,7 +126,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
         prevQueue.map((song) => {
           if (song.streamId === songId) {
             if (userUpvotes.has(songId)) {
-              console.log("downvote");
+              // console.log("downvote");
               wsRef.current?.send(
                 JSON.stringify({
                   type: "voteUpdate",
@@ -144,7 +145,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
               return { ...song, upvoteCount: Math.max(song.upvoteCount - 1, 0) };
             }
     
-            console.log("upvote");
+            // console.log("upvote");
             wsRef.current?.send(
               JSON.stringify({
                 type: "voteUpdate",
@@ -181,7 +182,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     }
 
     const messageControl = () => {
-      console.log("called meesage control")
+      // console.log("called meesage control")
       if(!userId) return;
       wsRef.current?.send(
         JSON.stringify({
@@ -201,7 +202,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     }
     
       return (
-        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus }}>
+        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus, userDets }}>
           {children}
         </WebSocketContext.Provider>
       );

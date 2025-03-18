@@ -28,38 +28,38 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
     const {socket} = useWebSocket();
     
 
-    function handleVote(item) {
-        console.log("Voting for stream:", item);
+    // function handleVote(item) {
+    //     console.log("Voting for stream:", item);
         
-        try {
-            fetch(`/api/streams/vote`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ item }),
-            })
-            .then(res => res.json())
-            .then(response => {
-                console.log(response.message);
+    //     try {
+    //         fetch(`/api/streams/vote`, {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ item }),
+    //         })
+    //         .then(res => res.json())
+    //         .then(response => {
+    //             console.log(response.message);
                 
-                if (socket) {
-                    socket.send(JSON.stringify({
-                        type: "voteUpdate",
-                        song: item,
-                        upvoteCount: response.upvoteCount 
-                    }));
-                }
+    //             if (socket) {
+    //                 socket.send(JSON.stringify({
+    //                     type: "voteUpdate",
+    //                     song: item,
+    //                     upvoteCount: response.upvoteCount 
+    //                 }));
+    //             }
     
-                setLikedSongs(prev => ({ ...prev, [item.streamId]: !prev[item.streamId] }));
-                PlayNext();
-            })
-            .catch(error => {
-                console.error("Error in handleVote:", error);
-            });
+    //             setLikedSongs(prev => ({ ...prev, [item.streamId]: !prev[item.streamId] }));
+    //             PlayNext();
+    //         })
+    //         .catch(error => {
+    //             console.error("Error in handleVote:", error);
+    //         });
     
-        } catch (e) {
-            console.error("Error in handleVote:", e);
-        }
-    }     
+    //     } catch (e) {
+    //         console.error("Error in handleVote:", e);
+    //     }
+    // }     
 
     const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,42 +93,42 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
         setInputLink('');
     }
 
-const PlayNext = async () => {
-            try {
-                setPlayNextLoader(true);
+// const PlayNext = async () => {
+//             try {
+//                 setPlayNextLoader(true);
 
-                //delete the song
-                if(currentVideo !== null){
-                    const remove = await axios.post('/api/streams/rm', currentVideo);
-                    if(socket){
-                        socket.send(
-                            JSON.stringify({
-                                type: "updateQueue",
-                                roomId: roomId,
-                                song: {
-                                    currentVideo: currentVideo
-                                }
-                            })
-                        )
-                    }
-                }
+//                 //delete the song
+//                 if(currentVideo !== null){
+//                     const remove = await axios.post('/api/streams/rm', currentVideo);
+//                     if(socket){
+//                         socket.send(
+//                             JSON.stringify({
+//                                 type: "updateQueue",
+//                                 roomId: roomId,
+//                                 song: {
+//                                     currentVideo: currentVideo
+//                                 }
+//                             })
+//                         )
+//                     }
+//                 }
 
-                //next most upvoted song
-                const data = await axios.get('/api/streams/next', {
-                    params: {
-                        roomId: roomId
-                    }
-                })
+//                 //next most upvoted song
+//                 const data = await axios.get('/api/streams/next', {
+//                     params: {
+//                         roomId: roomId
+//                     }
+//                 })
 
-                console.log("bhai json laaya hu", data);
+//                 console.log("bhai json laaya hu", data);
 
-                setCurrentVideo(data.data.stream);
-            } catch (error) {
-                console.log(error);
-            } finally{
-                setPlayNextLoader(false)
-            }
-}
+//                 setCurrentVideo(data.data.stream);
+//             } catch (error) {
+//                 console.log(error);
+//             } finally{
+//                 setPlayNextLoader(false)
+//             }
+// }
 
     return (
         <div className="w-screen h-screen flex bg-[#101216] justify-between items-center">

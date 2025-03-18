@@ -50,7 +50,7 @@ const Page = () => {
       if(!res){
         console.log("Error while creating room");  
       }
-      console.log("here is the response recieved", res);
+      // console.log("here is the response recieved", res);
       router.push(`/room/${createRoomId}`);
     } catch {
       console.log("Error while creating room");

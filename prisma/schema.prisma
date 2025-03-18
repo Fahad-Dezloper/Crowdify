@@ -10,6 +10,8 @@ datasource db {
 model User {
   id        String     @id @default(uuid())
   email     String     @unique
+  name      String
+  image     String
   provider  Provider
   rooms     RoomUser[]
   messages  Message[]
@@ -82,22 +84,6 @@ model Message {
   user      User     @relation(fields: [userId], references: [id])
   room      Room     @relation(fields: [roomId], references: [id])
 }
-
-// model CurrentStream {
-//   userId   String  @id
-//   streamId String? @unique
-//   stream   Stream? @relation(fields: [streamId], references: [id])
-// }
-
-// model Upvote {
-//   id       String @id @default(uuid())
-//   userId   String
-//   streamId String
-//   stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
-//   user     User   @relation(fields: [userId], references: [id])
-
-//   @@unique([userId, streamId])
-// }
 
 enum StreamType {
   Spotify
