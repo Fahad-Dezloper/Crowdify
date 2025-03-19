@@ -3,3 +3,22 @@
 // launch it
 // test and make it ready for deployment
 // responsiveness
+
+
+-- DEPLOYMENT CHANGES
+
+
+
+        // const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
+
+
+DATABASE_URL="postgresql://neondb_owner:npg_ErB2jdvW3xRL@ep-dark-morning-a5pzbtcg-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+// const PORT = process.env.WS_PORT || 4000;
+// const server = http.createServer();
+// const wss = new WebSocketServer({ server });
+
+// // Redis configuration for Railway
+// const redisClient = redis.createClient({
+//   url: process.env.REDIS_URL || "redis://default:sWrKlxRDRDgnAToHfBHWSlzlwzoZVYFa@tramway.proxy.rlwy.net:15775"
+// });
