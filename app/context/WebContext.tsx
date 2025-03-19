@@ -34,6 +34,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     // console.log("response from roomId", roomId);
 
     const fetchDets = async () => {
+      // @ts-ignore
         const res = await fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId, setUserDets);
         // console.log("res from /api/room:-", res);
         // @ts-ignore
