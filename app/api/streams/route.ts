@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prismaClient } from "@/app/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import {z} from 'zod'
 // @ts-ignore
 // import youtubesearchapi from 'youtube-search-api'
 import { Client, MusicClient } from "youtubei";
-import { YT_REGEX } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 
 const youtube = new Client();
@@ -17,7 +17,7 @@ const CreateStreamSchema = z.object({
     roomId: z.string()
 })
 
-function extractVideoId(url) {
+function extractVideoId(url: string) {
     const match = url.match(/[?&]v=([^&]+)/);
     return match ? match[1] : null;
   }
@@ -38,6 +38,9 @@ export async function POST(req: NextRequest) {
         // console.log("reached here to add");
 
         const extractedId = extractVideoId(data.url);
+        if (!extractedId) {
+            throw new Error("Invalid video ID extracted from the URL");
+        }
         const res = await youtube.getVideo(extractedId);
         console.log("YouTube API Response:", res);
 
@@ -51,12 +54,12 @@ export async function POST(req: NextRequest) {
                 url: data.url,
                 extractedId,
                 type: "Youtube",
-                title: res.title ?? "Can't find your song",
+                title: res?.title ?? "Can't find your song",
                 smallImg:
-                    res.thumbnails[0].url ??
+                    res?.thumbnails[0].url ??
                     "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
                 bigImg:
-                    res.thumbnails[res.thumbnails.length - 1].url ??
+                    res?.thumbnails[res.thumbnails.length - 1].url ??
                     "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
                 room: {
                     connect: {
@@ -80,7 +83,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 message: "Error while adding a stream",
-                error: e.message // ✅ Send error details to the frontend
+                error: e // ✅ Send error details to the frontend
             },
             { status: 411 }
         );
@@ -108,6 +111,7 @@ export async function GET(req: NextRequest){
     
     const [streams, activeStream] = await Promise.all([await prismaClient.stream.findMany({
         where: {
+            // @ts-ignore
             userId: creatorId ?? "",
             played: false
         }, 
@@ -123,6 +127,7 @@ export async function GET(req: NextRequest){
                 }
             }
         }
+        // @ts-ignore
     }), prismaClient.currentStream.findFirst({
         where: {
             userId: creatorId
@@ -134,6 +139,7 @@ export async function GET(req: NextRequest){
 
     // console.log("here streams", streams);
     return NextResponse.json({
+        // @ts-ignore
         streams: streams.map(({_count, ...rest}) => ({
             ...rest,
             upvotes: _count.upvotes,

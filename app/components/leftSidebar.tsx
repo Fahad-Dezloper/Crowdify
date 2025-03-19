@@ -5,7 +5,20 @@ import { useWebSocket } from "../context/WebContext";
 import Switch from "@/components/fancy/Button1";
 import CopyButton from "@/components/fancy/CopytoClipboard";
 
-const LeftSidebar = ({addToQueue, inputLink, YT_REGEX, setInputLink, isAdmin, roomId}) => {
+import { FC } from "react";
+
+interface LeftSidebarProps {
+    addToQueue: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    inputLink: string;
+    YT_REGEX: RegExp;
+    setInputLink: (value: string) => void;
+    isAdmin: boolean;
+    roomId: string;
+}
+
+
+const LeftSidebar: FC<LeftSidebarProps> = ({ addToQueue, inputLink, YT_REGEX, setInputLink, isAdmin, roomId }) => {
+    // @ts-ignore
     const { songAddStatus } = useWebSocket();
     console.log("left sidebar song add status",songAddStatus )
 

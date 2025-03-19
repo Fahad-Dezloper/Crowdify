@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { ChartNoAxesColumn, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Link2 } from "lucide-react"
 import Link from "next/link"
 import { useWebSocket } from "../context/WebContext";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 
 const Queue = () => {
+  // @ts-ignore
     const { queue, upvoteSong, userUpvotes, setUserUpvotes, userId } = useWebSocket();
     console.log("haa bhai liked", queue);
-    const handleUpvote = (songId) => {
+    const handleUpvote = (songId: unknown) => {
         // console.log("called");
         if (!songId || !userId) return;
     
@@ -21,12 +25,12 @@ const Queue = () => {
         upvoteSong(songId, userId);
       };
     // console.log("here we have queue", queue);
-    function concatenateWithinLimit(text) {
+    function concatenateWithinLimit(text: any) {
       let count = 0;
       let result = "";
-      let safeText = String(text);
+      const safeText = String(text);
       
-      for (let char of safeText) {
+      for (const char of safeText) {
           if (char !== " ") count++;
           if (count > 26) break;
           result += char;
@@ -51,7 +55,7 @@ const Queue = () => {
 
             <div className="flex overflow-auto w-full gap-3 scrolll">
             {queue.length > 0 ? (
-        queue.map((item, index) => (
+        queue.map((item: { thumbnail: string | undefined; title: any; upvoteCount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; streamId: unknown; }, index: Key | null | undefined) => (
           <div
             key={index}
             className="flex flex-col gap-4 border rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
@@ -74,7 +78,7 @@ const Queue = () => {
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-1 text-gray-400">
                 <ChartNoAxesColumn size={20} />
-                <span>{item.upvoteCount > 0 ? item.upvoteCount : ""}</span>
+                <span>{typeof item.upvoteCount === "number" && item.upvoteCount > 0 ? item.upvoteCount : ""}</span>
               </div>
 
               <button

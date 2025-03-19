@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CopyButton = ({roomId}) => {
+interface CopyButtonProps {
+  roomId: string;
+}
+
+const CopyButton = ({ roomId }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
   const textToCopy = roomId;
   

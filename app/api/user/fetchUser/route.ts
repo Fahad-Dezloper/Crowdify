@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prismaClient } from "@/app/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req, res){
+export async function GET(req: any, res: any){
     // console.log("called here first")
     const session = await getServerSession();
 

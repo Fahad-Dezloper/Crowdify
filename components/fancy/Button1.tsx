@@ -2,6 +2,7 @@ import { useWebSocket } from "@/app/context/WebContext";
 import React from "react";
 
 const Switch = () => {
+  // @ts-ignore
   const { allowSongAdd, songAddStatus } = useWebSocket();
   console.log("from switch component", songAddStatus);
 

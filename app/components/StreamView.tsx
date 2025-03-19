@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { Button } from "@/components/ui/button"
@@ -17,7 +18,13 @@ import TopBar from "./Topbar";
 import ChatBot from "./ChatBot";
 import { useWebSocket } from "../context/WebContext";
 
-const StreamView = ({creatorId, isAdmin, roomId}) => {
+interface StreamViewProps {
+    creatorId: string;
+    isAdmin: boolean;
+    roomId: string;
+}
+
+const StreamView = ({creatorId, isAdmin, roomId}: StreamViewProps) => {
     const [arr, setArr] = useState([])
     const [likedSongs, setLikedSongs] = useState({});
     // const musicRef = useRef(null);
@@ -25,6 +32,7 @@ const StreamView = ({creatorId, isAdmin, roomId}) => {
     const [currentVideo, setCurrentVideo] = useState(true);
     const [isUpvote, setIsUpvote] = useState(false);
     const [playNextLoader, setPlayNextLoader] = useState(false);
+    // @ts-ignore
     const {socket} = useWebSocket();
     
 

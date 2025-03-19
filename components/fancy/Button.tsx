@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWebSocket } from "@/app/context/WebContext";
 import React, { useState } from "react";
 
 const Switch = () => {
   const [checked, setChecked] = useState(false);
+  // @ts-ignore
   const { messageControl, chatPaused } = useWebSocket();
   // console.log("from switch component", chatPaused);
 

@@ -27,7 +27,7 @@ export async function GET(request: NextRequest){
     }
     const findRoomId = await prismaClient.room.findFirst({
         where: {
-            code: roomId
+            code: roomId ?? ""
         }
     });
 

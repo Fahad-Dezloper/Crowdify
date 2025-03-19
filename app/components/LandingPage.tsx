@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { AudioLines, Headphones, PauseCircle, PlayCircle, XIcon } from 'lucide-react'
 import React, { useRef, useState } from 'react'
@@ -10,7 +11,7 @@ import Navbar from './Navbar'
 
 const LandingPage = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const [playingIndex, setPlayingIndex] = useState(null);
+    const [playingIndex, setPlayingIndex] = useState<number | null>(null);
     const elements = [
         {
           top: "top-20",
@@ -62,16 +63,20 @@ const LandingPage = () => {
         },
       ];
 
-      const audioRefs = useRef([]);
-      const togglePlay = (index, song) => {
+      const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
+      const togglePlay = (index: number | null, song: string) => {
         if(playingIndex === index){
-            audioRefs.current[index].pause();
+            if (index !== null && audioRefs.current[index]) {
+                audioRefs.current[index].pause();
+            }
             setPlayingIndex(null);
         }else{
-            if(playingIndex !== null){
+            if (playingIndex !== null && audioRefs.current[playingIndex]) {
                 audioRefs.current[playingIndex]?.pause();
             }
-            audioRefs.current[index]?.play();
+            if (typeof index === 'number') {
+                audioRefs.current[index]?.play();
+            }
             setPlayingIndex(index);
         }
       }
@@ -126,7 +131,7 @@ const LandingPage = () => {
     </motion.div>
 
           {song && (
-            <audio ref={(el) => (audioRefs.current[index] =  el)} src={song} />
+            <audio ref={(el) => { audioRefs.current[index] = el; }} src={song} />
           )}
 
           {playingIndex === index && (

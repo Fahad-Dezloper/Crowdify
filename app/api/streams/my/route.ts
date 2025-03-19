@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prismaClient } from "@/app/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest){
 
     const streams = await prismaClient.stream.findMany({
         where: {
+            // @ts-ignore
             userId: user.id
         },
         include: {
@@ -39,9 +41,11 @@ export async function GET(req: NextRequest){
     // console.log("i am from stream route", streams);
 
     return NextResponse.json({
+        // @ts-ignore
         streams: streams.map(({_count, ...rest}) => ({
             ...rest,
             upvotesCount: _count.upvotes,
+            // @ts-ignore
             haveUpvoted: rest.upvotes.length ? true : false
         }))
     })

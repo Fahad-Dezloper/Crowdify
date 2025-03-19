@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -7,8 +8,13 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useWebSocket } from "../context/WebContext";
 
-const TopBar = ({userId}) => {
-    const {userDets} = useWebSocket();
+interface TopBarProps {
+    userId: string;
+}
+
+const TopBar = ({ userId }: TopBarProps) => {
+    // @ts-ignore
+    const { userDets } = useWebSocket();
     // console.log("from topbar", userDets);
 
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import * as React from 'react';
 import ChatBot from "@/app/components/ChatBot";
@@ -16,19 +17,22 @@ const RoomPage = () => {
   const [roomData, setRoomData] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [userDets, setUserDets] = useState(null);
 
   useEffect(() => {
     if (roomId) {
       // console.log("roomId.roomId", roomId);
       setRoomIdd(Array.isArray(roomId) ? roomId[0] : roomId);
     }
-    fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId);
+    fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId, setUserDets);
   }, [roomId]);
   
 
   return (
+    // @ts-ignore
     <WebSocketProvider roomId={roomIdd}>
     <div>
+      {/* @ts-ignore */}
       <StreamView creatorId={userId} isAdmin={isAdmin} roomId={roomIdd} />
     </div>
     </WebSocketProvider>

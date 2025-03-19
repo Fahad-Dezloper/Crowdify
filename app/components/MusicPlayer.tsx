@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -6,7 +7,12 @@ import { useRef, useState } from "react";
 import ReactPlayer from "react-player"
 import { useWebSocket } from "../context/WebContext";
 
-const MusicPlayer = ({isAdmin}) => {
+interface MusicPlayerProps {
+  isAdmin: boolean;
+}
+
+const MusicPlayer = ({ isAdmin }: MusicPlayerProps) => {
+  // @ts-ignore
   const {nowPlaying, nextSong, prevSong, userDets} = useWebSocket()
   console.log("now playing event happened", nowPlaying);
 

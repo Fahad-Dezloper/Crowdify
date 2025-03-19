@@ -11,7 +11,7 @@ const Redirect = () => {
         if(session?.data?.user){
             router.push("/room")
         }
-    }, [session]);
+    }, [router, session]);
 
   return null;
 }

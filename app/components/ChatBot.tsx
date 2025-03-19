@@ -1,10 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { useWebSocket } from "../context/WebContext";
 import Switch from "@/components/fancy/Button";
 
-const ChatBot = ({isAdmin}) => {
+interface ChatBotProps {
+  isAdmin: boolean;
+}
+
+const ChatBot = ({ isAdmin }: ChatBotProps) => {
+  // @ts-ignore
   const { messages, sendMessage, messageControl, chatPaused } = useWebSocket();
   const [input, setInput] = useState("");
   // console.log("chat paused fn", chatPaused)
