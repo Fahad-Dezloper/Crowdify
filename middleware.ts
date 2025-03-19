@@ -6,7 +6,7 @@ export const config = {
 }
 
 export function middleware(request: NextRequest){
-    const authSessionToken = request.cookies.get('authjs.session-token') || request.cookies.get('next-auth.session-token');
+    const authSessionToken = request.cookies.get('authjs.session-token') || request.cookies.get('next-auth.session-token') || request.cookies.get('__Secure-next-auth.session-token');
 
     const url = request.nextUrl;
 
