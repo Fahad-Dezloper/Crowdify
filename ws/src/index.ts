@@ -128,7 +128,7 @@ wss.on("connection", (ws) => {
       }
 
       else if (data.type === "voteUpdate" && roomId) {
-        // console.log("Vote update received:", data);
+        console.log("Vote update event happeing received:", data);
         try {
           if (!data.songId || !data.voteType || !data.userId) {
             console.error("Error: songId, userId, or voteType is missing in the received data:", data);
@@ -201,15 +201,15 @@ wss.on("connection", (ws) => {
           await multi.exec();
       
           // Find highest voted song
-          let highestVotedSong = updatedQueue.length
-            ? updatedQueue.reduce((prev, curr) =>
-                (prev?.upvoteCount || 0) > (curr?.upvoteCount || 0) ? prev : curr
-              )
-            : null;
+          // let highestVotedSong = updatedQueue.length
+          //   ? updatedQueue.reduce((prev, curr) =>
+          //       (prev?.upvoteCount || 0) > (curr?.upvoteCount || 0) ? prev : curr
+          //     )
+          //   : null;
       
-          if (highestVotedSong) {
-            await redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
-          }
+          // if (highestVotedSong) {
+          //   await redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
+          // }
       
           // Broadcast updated queue and now playing song
           rooms.get(roomId)?.users.forEach((client) => {
@@ -229,7 +229,8 @@ wss.on("connection", (ws) => {
       }
  
       else if(data.type === "nextSong" && roomId) {
-        console.log("Next song request received");
+        console.log("next song event happen");
+        // console.l/
 
         try {
             const songQueueKey = `queue:${roomId}`;

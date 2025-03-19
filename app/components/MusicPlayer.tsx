@@ -30,7 +30,9 @@ const MusicPlayer = ({isAdmin}) => {
 
   const handleSongEnd = () => {
     setProgress(0); 
-    nextSong(); 
+    if(isAdmin){
+      nextSong();
+    }
   };
 
   const handleProgress = (state: { played: number; playedSeconds: number }) => {
@@ -53,7 +55,7 @@ const MusicPlayer = ({isAdmin}) => {
         <>
           {nowPlaying ? <div className="flex flex-col gap-4 w-full h-full ">
             <div className="flex flex-col justify-between h-full">
-            <div className="w-full h-[30vh] shadow-xl rounded-2xl overflow-hidden">
+            <div className="w-full h-[25vh] shadow-xl rounded-2xl overflow-hidden">
               <ReactPlayer
                     ref={playerRef}
                     url={nowPlaying.url}

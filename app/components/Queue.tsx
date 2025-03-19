@@ -80,10 +80,11 @@ const Queue = () => {
               <button
                 onClick={() => handleUpvote(item.streamId)}
                 className={`px-2 py-1 rounded-md transition-transform duration-200 active:scale-90 text-white ${
-                  userUpvotes.has(item.streamId) ? "bg-green-500" : "bg-gray-500"
+                  userUpvotes.has(item.streamId) ? "bg-green-500" : "bg-gray-200 text-black"
                 }`}
               >
-                {userUpvotes.has(item.streamId) ? "Upvoted" : "Upvote"}
+                <ChevronUp className={`${userUpvotes.has(item.streamId) ? "text-white" : "text-gray-400"}`} />
+                {/* {userUpvotes.has(item.streamId) ? "Upvoted" : "Upvote"} */}
               </button>
             </div>
           </div>

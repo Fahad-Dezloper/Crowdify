@@ -67,8 +67,9 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
                 break;
               case "voteUpdate":
                 setQueue(data.queue);
+                break;
               case "nowPlaying":
-                // console.log("data for now playing", data);
+                console.log("data for now playing", data);
                 setNowPlaying(data.song);
                 break;
               case "chatStatus":

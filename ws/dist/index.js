@@ -146,7 +146,7 @@ wss.on("connection", (ws) => {
                 });
             }
             else if (data.type === "voteUpdate" && roomId) {
-                // console.log("Vote update received:", data);
+                console.log("Vote update event happeing received:", data);
                 try {
                     if (!data.songId || !data.voteType || !data.userId) {
                         console.error("Error: songId, userId, or voteType is missing in the received data:", data);
@@ -206,12 +206,14 @@ wss.on("connection", (ws) => {
                     // Execute all commands atomically
                     yield multi.exec();
                     // Find highest voted song
-                    let highestVotedSong = updatedQueue.length
-                        ? updatedQueue.reduce((prev, curr) => ((prev === null || prev === void 0 ? void 0 : prev.upvoteCount) || 0) > ((curr === null || curr === void 0 ? void 0 : curr.upvoteCount) || 0) ? prev : curr)
-                        : null;
-                    if (highestVotedSong) {
-                        yield redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
-                    }
+                    // let highestVotedSong = updatedQueue.length
+                    //   ? updatedQueue.reduce((prev, curr) =>
+                    //       (prev?.upvoteCount || 0) > (curr?.upvoteCount || 0) ? prev : curr
+                    //     )
+                    //   : null;
+                    // if (highestVotedSong) {
+                    //   await redisClient.set(`nowPlaying:${roomId}`, JSON.stringify(highestVotedSong));
+                    // }
                     // Broadcast updated queue and now playing song
                     (_g = rooms.get(roomId)) === null || _g === void 0 ? void 0 : _g.users.forEach((client) => {
                         if (client.readyState === ws_1.WebSocket.OPEN) {
@@ -229,7 +231,8 @@ wss.on("connection", (ws) => {
                 }
             }
             else if (data.type === "nextSong" && roomId) {
-                console.log("Next song request received");
+                console.log("next song event happen");
+                // console.l/
                 try {
                     const songQueueKey = `queue:${roomId}`;
                     const historyKey = `history:${roomId}`;
