@@ -3,7 +3,7 @@ import { prismaClient } from "@/app/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { roomId: string } }) {
+export async function GET(req: NextRequest) {
     const session = await getServerSession(); // Get current user session
     const url = new URL(req.url);
     const pathSegments = url.pathname.split("/");
