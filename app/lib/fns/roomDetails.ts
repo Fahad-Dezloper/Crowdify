@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { SetStateAction } from "react";
 
-export const fetchRoomDetails = async (roomId: string | string[] | undefined, setRoomData: { (value: SetStateAction<null>): void; (arg0: any): void; }, setIsAdmin: { (value: SetStateAction<boolean>): void; (arg0: any): void; }, setUserId, setUserDets) => {
+export const fetchRoomDetails = async (roomId: string | string[] | undefined, setRoomData: { (value: SetStateAction<null>): void; (arg0: any): void; }, setIsAdmin: { (value: SetStateAction<boolean>): void; (arg0: any): void; }, setUserId: { (value: SetStateAction<null>): void; (value: SetStateAction<null>): void; (arg0: any): void; }, setUserDets: { (value: SetStateAction<null>): void; (value: SetStateAction<null>): void; (arg0: AxiosResponse<any, any>): void; }) => {
     try {
         const res = await axios.get(`/api/room/${roomId}`);
         // console.log("res from /api/room:-", res);
