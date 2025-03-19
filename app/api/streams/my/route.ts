@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { prismaClient } from "@/app/lib/db";
 import { getServerSession } from "next-auth";
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest){
 
     const streams = await prismaClient.stream.findMany({
         where: {
-            // @ts-ignore
+            // @ts-expect-error
             userId: user.id
         },
         include: {

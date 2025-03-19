@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useWebSocket } from "@/app/context/WebContext";
 import React from "react";
 

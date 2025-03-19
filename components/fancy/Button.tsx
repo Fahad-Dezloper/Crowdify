@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWebSocket } from "@/app/context/WebContext";
 import React, { useState } from "react";
