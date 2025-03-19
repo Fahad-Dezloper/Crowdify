@@ -50,7 +50,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     useEffect(() => {
         if (!roomId) return;
 
-        const ws = new WebSocket("crowdify-backend-production.up.railway.app:4000");
+        const ws = new WebSocket("ws://crowdify-backend-production.up.railway.app:4000");
         
         wsRef.current = ws;
 
