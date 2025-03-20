@@ -50,8 +50,12 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     useEffect(() => {
         if (!roomId) return;
 
-        // const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
-        const ws = new WebSocket("ws://localhost:4000");
+        if (!process.env.WS_URL) {
+          console.error("WebSocket URL is not defined in environment variables.");
+          return;
+        }
+        const ws = new WebSocket(process.env.WS_URL);
+        // const ws = new WebSocket("ws://localhost:4000");
 
         wsRef.current = ws;
 
