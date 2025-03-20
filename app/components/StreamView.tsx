@@ -140,30 +140,54 @@ const StreamView = ({creatorId, isAdmin, roomId}: StreamViewProps) => {
 // }
 
     return (
-        <div className="w-screen h-screen flex bg-[#101216] justify-between items-center">
+        <div className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] justify-between overflow-y-auto items-center">
+        
+        {/* Left Sidebar (For Large Screens) */}
+        <div className="hidden md:flex h-full">
+            <LeftSidebar 
+                isAdmin={isAdmin} 
+                roomId={roomId} 
+                addToQueue={addToQueue} 
+                inputLink={inputLink} 
+                YT_REGEX={YT_REGEX} 
+                setInputLink={setInputLink} 
+            />
+        </div>
 
-            <LeftSidebar isAdmin={isAdmin} roomId={roomId} addToQueue={addToQueue} inputLink={inputLink} YT_REGEX={YT_REGEX} setInputLink={setInputLink} />
+        <div className="w-full h-full flex flex-col overflow-hidden">
+            <TopBar userId={creatorId} />
 
-            <div className="w-full h-full flex overflow-hidden flex-col">
-                <TopBar userId={creatorId} />
+            {/* Left Sidebar Below Top Bar (For Small & Medium Screens) */}
+            <div className="md:hidden">
+                <LeftSidebar 
+                    isAdmin={isAdmin} 
+                    roomId={roomId} 
+                    addToQueue={addToQueue} 
+                    inputLink={inputLink} 
+                    YT_REGEX={YT_REGEX} 
+                    setInputLink={setInputLink} 
+                />
+            </div>
 
-
-                <div className="w-full h-[50vh] flex items-center scrolll justify-center px-6 pt-1 pb-2">
-                    <Queue />
+                <div className="flex md:hidden my-4 bg-white p-2 rounded-2xl mx-2">
+                    <MusicPlayer isAdmin={isAdmin}/>
                 </div>
 
+            <div className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-6 pt-1 pb-2 overflow-x-auto">
+                <Queue />
+            </div>
 
-                <div className="flex w-full h-full overflow-hidden px-6 py-5 gap-4">            
-                    <ChatBot isAdmin={isAdmin} />
+            <div className="flex flex-col md:flex-row w-full h-full overflow-hidden px-2 md:px-6 py-2 gap-4">
+                <ChatBot isAdmin={isAdmin} />
 
-                    <div className="w-[40vw] h-full">
-                        <div className="w-full h-full bg-white rounded-2xl py-5 px-6" >
-                                <MusicPlayer isAdmin={isAdmin} />
-                            </div>
-                        </div>
+                <div className="w-full md:flex hidden md:w-[40vw] h-full">
+                    <div className="w-full h-full bg-white rounded-2xl py-5 px-6">
+                        <MusicPlayer isAdmin={isAdmin} />
                     </div>
+                </div>
             </div>
         </div>
+    </div>
     )
 }
 

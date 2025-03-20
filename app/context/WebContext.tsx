@@ -50,8 +50,9 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     useEffect(() => {
         if (!roomId) return;
 
-        const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
-        
+        // const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
+        const ws = new WebSocket("ws://localhost:4000");
+
         wsRef.current = ws;
 
         ws.onopen = () => {
@@ -223,3 +224,6 @@ export const useWebSocket = () => {
     }
     return context;
   };
+
+
+

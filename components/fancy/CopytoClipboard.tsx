@@ -67,6 +67,7 @@ const CopyButton = ({ roomId }: CopyButtonProps) => {
       <div className="relative">
         <button 
           onClick={handleCopy}
+          onTouchStart={handleCopy}
           className="flex items-center gap-2 text-sm text-gray-700 z-50 px-4 py-2 rounded-md transition-all hover:border ease-in-out duration-200 border-0 border-gray-700"
         >
           <span className="font-mono">{roomId}</span>

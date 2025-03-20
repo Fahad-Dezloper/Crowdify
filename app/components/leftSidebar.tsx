@@ -24,51 +24,43 @@ const LeftSidebar: FC<LeftSidebarProps> = ({ addToQueue, inputLink, YT_REGEX, se
     console.log("left sidebar song add status",songAddStatus )
 
     return (
-        <div className="min-w-[22vw] h-full py-5 px-3">
-            <div className="min-w-[22vw] rounded-2xl flex flex-col bg-white h-full overflow-y-auto px-4">
-                <h1 className="font-funnel text-4xl text-center py-8 font-semibold">Crowdify</h1>
-                {/* <span className="w-full flex justify-center items-center font-funnel text-xl">{isAdmin ? "Admin" : "User"}</span> */}
-                {/* <span>staus is {songAddStatus ? "yes" : "no"}</span> */}
-                <div className="w-full flex flex-row-reverse justify-between items-center  min-h-[80px]">
-                {isAdmin ? <Switch /> : ""}
-                {/* <span>{roomId}</span> */}
-                <div className="py-2">
+        <div className="w-full md:w-[40vw] lg:w-[23vw] h-full py-3 px-2 md:py-5 md:px-3">
+        <div className="w-full bg-white py-4 rounded-2xl flex flex-col h-full overflow-y-auto px-4">
+            <div className="flex md:flex-col items-center">
+            <h1 className="font-funnel text-3xl md:text-4xl text-center pb-3 md:pt-8 md:pb-4 font-semibold">Crowdify</h1>
+
+            <div className="w-full flex md:flex-row-reverse justify-end md:justify-between items-center min-h-[60px] md:min-h-[80px]">
+                {isAdmin && <div className="hidden md:flex"><Switch /></div>}
+                <div className="py-1 md:py-2">
                     <CopyButton roomId={roomId} />
                 </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                
-                {songAddStatus ? <>
-                    <div className="flex gap-3">
-                <Input placeholder="Add Song..." className="text-black border" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
-                <Button onClick={(e) => addToQueue(e)}>Add to Queue</Button>
-                </div>
-                {inputLink && inputLink.match(YT_REGEX) ? (
-                <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden">
-                    <div className="w-full h-[23vh]">
-                        <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]}/>
-                    </div>
-                </div>
-            ) : <div className="bg-[#101216] border-gray-800 rounded-b-xl overflow-hidden h-[23vh] text-white text-2xl flex items-center justify-center w-full font-funnel">No Preview Available</div>}
-                </> : <>
-                    {isAdmin ? <>
-                    <div className="flex gap-3">
-                <Input placeholder="Add Song..." className="text-black border" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
-                <Button onClick={(e) => addToQueue(e)}>Add to Queue</Button>
-                </div>
-                {inputLink && inputLink.match(YT_REGEX) ? (
-                <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden">
-                    <div className="w-full h-[23vh]">
-                        <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]}/>
-                    </div>
-                </div>
-            ) : <div className="bg-[#101216] border-gray-800 rounded-b-xl overflow-hidden h-[23vh] text-white text-2xl flex items-center justify-center w-full font-funnel">No Preview Available</div>}
-                </> : ""}
-                </>}
-        
-        </div>
+            </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col md:flex-row gap-2">
+                            <Input placeholder="Add Song..." className="text-black border" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
+                            <Button className="w-full md:w-auto" onClick={(e) => addToQueue(e)}>Add to Queue</Button>
+                        </div> */}
+                {songAddStatus || isAdmin ? (
+                    <>
+                        <div className="flex flex-col md:flex-row gap-2">
+                        {isAdmin && <div className="md:hidden flex w-full justify-end"><Switch /></div>}
+                            <Input placeholder="Add Song..." className="text-black border" value={inputLink} onChange={(e) => setInputLink(e.target.value)} />
+                            <Button className="w-full md:w-auto" onClick={(e) => addToQueue(e)}>Add to Queue</Button>
+                        </div>
+                        {inputLink && inputLink.match(YT_REGEX) && (
+                            <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden">
+                                <div className="w-full h-[30vh] md:h-[23vh]">
+                                    <LiteYouTubeEmbed title="" id={inputLink.split("?v=")[1]} />
+                                </div>
+                            </div>
+                        )}
+                    </>
+                ) : null}
             </div>
         </div>
+    </div>
     )
 }
 
