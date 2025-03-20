@@ -1,4 +1,7 @@
 // improve the UI now
+--> room page UI DOne
+--> move to dasboard page UI then landing page then auto add songs from search
+
 // add previous song play functionality in index.ts ws -- later now now 
 // launch it
 // test and make it ready for deployment

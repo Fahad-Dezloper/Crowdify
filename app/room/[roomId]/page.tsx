@@ -32,7 +32,7 @@ const RoomPage = () => {
   return (
     // @ts-ignore
     <WebSocketProvider roomId={roomIdd}>
-    <div>
+    <div className="w-full h-full overflow-y-auto">
       {/* @ts-ignore */}
       <StreamView creatorId={userId} isAdmin={isAdmin} roomId={roomIdd} />
     </div>

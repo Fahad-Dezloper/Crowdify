@@ -33,7 +33,7 @@ const Queue = () => {
       
       for (const char of safeText) {
           if (char !== " ") count++;
-          if (count > 26) break;
+          if (count > 20) break;
           result += char;
       }
     
@@ -41,7 +41,7 @@ const Queue = () => {
     }
 
     return (
-        <div className="bg-white w-full h-full flex flex-col gap-4 pb-8 pt-4 overflow-x-auto scrolll px-6 rounded-2xl">
+        <div className="bg-white flex flex-col md:gap-2 gap-4 pb-4 pt-4 overflow-x-auto scrolll px-6 rounded-2xl w-full h-full">
             <div className="w-full flex justify-between items-center">
                         <h1 className="text-xl font-roboto font-semibold">Next in Row</h1> 
                         <div className="flex items-center gap-3">
@@ -54,16 +54,16 @@ const Queue = () => {
                         </div>
             </div>
 
-            <div className="flex overflow-auto w-full gap-3 scrolll">
+            <div className="flex overflow-auto items-end w-full gap-3 scrolll h-full">
             {queue.length > 0 ? (
         queue.map((item: { thumbnail: string | undefined; title: any; upvoteCount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; streamId: unknown; }, index: Key | null | undefined) => (
           <div
             key={index}
-            className="flex flex-col gap-4 border rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
+            className="flex flex-col min-w-[33vw] max-w-[35vw] md:min-w-0 md:w-[13vw] gap-4 border h-full rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
           >
             {/* 🔥 Song Thumbnail & Title */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="min-w-[10vw] h-[13vh] rounded-xl overflow-hidden">
+            <div className="flex flex-col items-center gap-2 h-full">
+              <div className="min-w-[12vw] min-h-[12vh] rounded-xl overflow-hidden">
                 <img
                   src={item.thumbnail}
                   alt="Preview Image"
@@ -75,7 +75,6 @@ const Queue = () => {
               </h1>
             </div>
 
-            {/* 🔥 Vote Count & Upvote Button */}
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-1 text-gray-400">
                 <ChartNoAxesColumn size={20} />
@@ -95,7 +94,7 @@ const Queue = () => {
           </div>
         ))
       ) : (
-        <>No song in queue at the moment</>
+        <div className="w-full h-full ">No song in queue at the moment</div>
       )}
             </div>
         </div>

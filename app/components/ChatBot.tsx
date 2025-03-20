@@ -23,38 +23,56 @@ const ChatBot = ({ isAdmin }: ChatBotProps) => {
     };
     
     return (
-        <div className="w-full h-full  overflow-y-auto">
-            <div className="bg-white w-full p-3 h-full flex flex-col justify-between rounded-2xl">
-           {isAdmin ? <div className="w-full flex items-end justify-end "><Switch /></div> : ""}                 
-                        {/* <h1>Room ID: {roomId}</h1> */}
-                        {/* <button onClick={messageControl}>{chatPaused ? "play" : "pause"}</button> */}
-      <div className="w-full h-full overflow-y-auto flex flex-col gap-2 mb-2">
-        {messages.map((msg, index) => (
-          <div key={index} className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-gray-400 rounded-full" />
-            <p className="text-sm">{msg}</p>
-          </div>
-        ))}
+      <div className="w-full h-full overflow-hidden">
+  <div className="bg-white w-full p-3 h-full flex flex-col rounded-2xl">
+    
+    {/* Admin Toggle */}
+    {isAdmin && (
+      <div className="w-full flex items-end justify-end">
+        <Switch />
       </div>
-      <div className="w-full h-fit flex gap-4 items-center">
+    )}
+
+    {/* Chat Messages (Fix: Ensuring full height) */}
+    <div className="w-full flex-1 overflow-y-auto flex flex-col gap-2 mb-2 px-2 sm:px-4 
+                    min-h-[15vh] max-h-[30vh] md:min-h-0 md:max-h-none">
+      {messages ? (
+        messages.map((msg, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-gray-400 rounded-full" />
+            <p className="text-xs sm:text-sm">{msg}</p>
+          </div>
+        ))
+      ) : (
+        <div className="text-xl w-full h-full flex items-center justify-center">
+          Chill bro
+        </div>
+      )}
+    </div>
+
+    {/* Input Section */}
+    <div className="w-full h-fit flex gap-2 sm:gap-4 items-center p-2 sm:p-4">
       <input
         type="text"
         value={input}
         disabled={chatPaused}
-        placeholder={`${chatPaused ? "Paused" : ""}`}
+        placeholder={`${chatPaused ? "Paused" : "Type a message..."}`}
         onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSend();
-          }
-        }}
-        className="bg-gray-400 w-full h-full rounded-2xl px-5 outline-none placeholder:text-black"
+        onKeyDown={(e) => e.key === "Enter" && handleSend()}
+        className="bg-gray-200 w-full h-10 sm:h-12 rounded-xl px-4 outline-none text-sm sm:text-base placeholder:text-gray-600"
       />
-      <button onClick={handleSend} className={`p-3 ${chatPaused ? "" : "bg-black"} rounded-full outline-none text-white`}><ChevronUp /></button>
-      </div>
-
+      <button
+        onClick={handleSend}
+        className={`p-2 sm:p-3 ${chatPaused ? "bg-gray-400" : "bg-black"} rounded-full outline-none text-white`}
+      >
+        <ChevronUp />
+      </button>
     </div>
-        </div>
+
+  </div>
+</div>
+
+
     )
 }
 
