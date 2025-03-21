@@ -2,130 +2,70 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { prismaClient } from "@/app/lib/db";
 import { NextRequest, NextResponse } from "next/server";
-import {z} from 'zod'
-// @ts-ignore
-// import youtubesearchapi from 'youtube-search-api'
-import { Client, MusicClient } from "youtubei";
+import { z } from "zod";
+import ytdl from "ytdl-core";
 import { getServerSession } from "next-auth";
 
-const youtube = new Client();
-const music = new MusicClient();
-
-// no video id is here
+// Schema for validation
 const CreateStreamSchema = z.object({
-    creatorId: z.string() || null,
-    url: z.string(),
-    roomId: z.string()
-})
+  creatorId: z.string().nullable(),
+  url: z.string(),
+  roomId: z.string(),
+});
 
+// Function to extract Video ID from a YouTube URL
 function extractVideoId(url: string) {
-    const match = url.match(/(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|\/e\/|watch\?v=|watch\?.+&v=)([^&]+)/);
-    return match ? match[1] : null;
+  const match = url.match(
+    /(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|\/e\/|watch\?v=|watch\?.+&v=)([^&]+)/
+  );
+  return match ? match[1] : null;
 }
-
 
 export async function POST(req: NextRequest) {
-    const det = await req.json();
-    console.log("data is det", det);
-    try {
-        const rawBody = det;
-        console.log("Received raw data:", rawBody);
+  const det = await req.json();
+  console.log("data is det", det);
 
-        const data = rawBody;
+  try {
+    const rawBody = det;
+    console.log("Received raw data:", rawBody);
 
-        const extractedId = extractVideoId(data.url);
-        console.log('extractedId is', extractedId);
-        
-        if (!extractedId) {
-            
-            throw new Error("Invalid video ID extracted from the URL");
-        }
+    const data = rawBody;
+    const extractedId = extractVideoId(data.url);
+    console.log("extractedId is", extractedId);
 
-        console.log("before fn called")
-        const res = await youtube.getVideo(extractedId);
-        console.log("before fn called", res);
-
-        console.log(res?.title)
-        console.log(res?.thumbnails[res.thumbnails.length - 1].url)
-
-        return NextResponse.json({
-            message: "Added Stream",
-            id: crypto.randomUUID(),
-            title: res?.title,
-            bigImg: res?.thumbnails[res.thumbnails.length - 1].url ??
-            "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
-        });
-    } catch (e) {
-        console.error("Error occurred:", e);
-
-        return NextResponse.json(
-            {
-                message: "Error while adding a stream",
-                error: e
-            },
-            { status: 411 }
-        );
+    if (!extractedId) {
+      throw new Error("Invalid video ID extracted from the URL");
     }
-}
 
-
-// export async function GET(req: NextRequest){
-//     const creatorId = req.nextUrl.searchParams.get("creatorId");
-//     const session = await getServerSession();
-
-//     const user = await prismaClient.user.findFirst({
-//         where: {
-//             email: session?.user?.email ?? ""
-//         }
-//     })
-
-//     if(!creatorId){
-//         return NextResponse.json({
-//             message: "Error"
-//         }, {
-//             status: 411
-//         })
-//     }
+    console.log("Fetching video details...");
     
-//     const [streams, activeStream] = await Promise.all([await prismaClient.stream.findMany({
-//         where: {
-//             // @ts-ignore
-//             userId: creatorId ?? "",
-//             played: false
-//         }, 
-//         include: {
-//             _count: {
-//                 select: {
-//                     upvotes: true
-//                 }
-//             },
-//             upvotes: {
-//                 where: {
-//                     userId: user?.id
-//                 }
-//             }
-//         }
-//         // @ts-ignore
-//     }), prismaClient.currentStream.findFirst({
-//         where: {
-//             userId: creatorId
-//         },
-//         include: {
-//             stream: true
-//         }
-//     })])
+    // Fetch video metadata using ytdl-core
+    const videoInfo = await ytdl.getInfo(extractedId);
+    const { videoDetails } = videoInfo;
 
-//     // console.log("here streams", streams);
-//     return NextResponse.json({
-//         // @ts-ignore
-//         streams: streams.map(({_count, ...rest}) => ({
-//             ...rest,
-//             upvotes: _count.upvotes,
-//             haveUpvoted: rest.upvotes.length ? true : false
-//         })),
-//         activeStream
-//     })
-// }
+    console.log("Fetched video details:", videoDetails.title);
 
+    // Extract the best available thumbnail
+    const thumbnail =
+      videoDetails.thumbnails.length > 0
+        ? videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url
+        : "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png";
 
-// addedBy: data.creatorId,
+    return NextResponse.json({
+      message: "Added Stream",
+      id: crypto.randomUUID(),
+      title: videoDetails.title,
+      bigImg: thumbnail,
+    });
+  } catch (e) {
+    console.error("Error occurred:", e);
+
+    return NextResponse.json(
+      {
+        message: "Error while adding a stream",
+        error: e,
+      },
+      { status: 411 }
+    );
+  }
+}

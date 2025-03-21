@@ -32,6 +32,7 @@
     "three": "^0.174.0",
     "youtube-search-api": "^1.2.2",
     "youtubei": "^1.6.7",
+    "ytdl-core": "^4.11.5",
     "zod": "^3.24.1"
   },
   "devDependencies": {
