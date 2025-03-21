@@ -37,10 +37,13 @@ export async function POST(req: NextRequest) {
         console.log('extractedId is', extractedId);
         
         if (!extractedId) {
+            
             throw new Error("Invalid video ID extracted from the URL");
         }
 
+        console.log("before fn called")
         const res = await youtube.getVideo(extractedId);
+        console.log("before fn called", res);
 
         console.log(res?.title)
         console.log(res?.thumbnails[res.thumbnails.length - 1].url)
