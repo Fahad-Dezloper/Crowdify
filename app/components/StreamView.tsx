@@ -36,7 +36,7 @@ const StreamView = ({roomId}: StreamViewProps) => {
 
     const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("event hapend for add to queue");
+        // console.log("event hapend for add to queue");data rec for sending in ws
         const res = await fetch("/api/streams/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -38,7 +38,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
       // @ts-ignore
         try{
           const res = await fetchRoomDetails(roomId);
-          console.log("res from /api/room:-", res);
+          // console.log("res from /api/room:-", res);
           setRoomData(res?.room.room);
           setIsAdmin(res?.room.isAdmin);
           // setUserId(res?.room.userId);
@@ -72,7 +72,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
         //   console.error("WebSocket URL is not defined in environment variables.");
         //   return;
         // }
-        console.log("we cam ehre to call", userId);
+        // console.log("we cam ehre to call", userId);
         // const ws = new WebSocket(process.env.WS_URL);
         // const ws = new WebSocket("ws://localhost:4000");
         const ws = new WebSocket("wss://adcc-110-235-239-186.ngrok-free.app");
@@ -88,7 +88,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            console.log("data rec for sending in ws: ", data);
+            // console.log("data rec for sending in ws: ", data);
             switch (data.type){
               case "message":
                 // console.log("message vala data", data);
@@ -101,7 +101,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
                 setQueue(data.queue);
                 break;
               case "nowPlaying":
-                console.log("data for now playing", data);
+                // console.log("data for now playing", data);
                 setNowPlaying(data.song);
                 break;
               case "chatStatus":
@@ -109,7 +109,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
                 setChatPaused(data.paused);
                 break;
               case "allowSongAdd":
-                console.log("data for allowSongAdd", data);
+                // console.log("data for allowSongAdd", data);
                 setSongAddStatus(data.paused);
                 break;
               default:
@@ -152,7 +152,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
     };
   
     const upvoteSong = (songId: unknown, userId: any) => {
-      console.log("here yo wassup", songId, "here i am", userId);
+      // console.log("here yo wassup", songId, "here i am", userId);
       
       if (!songId || !userId) return;
     

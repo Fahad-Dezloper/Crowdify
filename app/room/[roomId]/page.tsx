@@ -17,7 +17,7 @@ const RoomPage = () => {
   async function fetchUser() {
     try {
       const res = await axios.get("/api/user/fetchUser");
-      console.log("res from room page", res);
+      // console.log("res from room page", res);
       setUserId(res.data.user.id);
     } catch (error) {
       console.error("Error fetching user:", error);
