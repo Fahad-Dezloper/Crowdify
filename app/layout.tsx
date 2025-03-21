@@ -3,6 +3,7 @@ import { Funnel_Display, Roboto } from "next/font/google";
 import "./globals.css";
 import { Provider } from "./Provider";
 import Navbar from "./components/Navbar";
+import { Toaster } from "@/components/ui/sonner"
 
 const funnelDisplay = Funnel_Display({
   subsets: ["latin"],
@@ -31,10 +32,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${funnelDisplay.variable} ${roboto.variable} antialiased`}
+        className={`${funnelDisplay.variable} ${roboto.variable} antialiased relative`}
       >
         <Provider>
-        <Navbar />
+          <Toaster />
         {children}
         </Provider>
       </body>

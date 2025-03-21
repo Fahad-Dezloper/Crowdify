@@ -1,11 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useWebSocket } from "@/app/context/WebContext";
-import React from "react";
+import React, { useEffect } from "react";
+import { toast } from "sonner";
 
 const Switch = () => {
   // @ts-ignore
   const { allowSongAdd, songAddStatus } = useWebSocket();
   // console.log("from switch component", songAddStatus);
+  useEffect(() => {
+    if(songAddStatus){
+      toast("Users are allowed to Enter Songs");
+    } else {
+      toast("Users are not allowed to Enter Songs");
+    }
+  }, [allowSongAdd, songAddStatus])
 
   return (
     <div className="relative aspect-[292/142] h-7">
@@ -24,7 +32,7 @@ const Switch = () => {
         <path
           d="M71 142C31.7878 142 0 110.212 0 71C0 31.7878 31.7878 0 71 0C110.212 0 119 30 146 30C173 30 182 0 221 0C260 0 292 31.7878 292 71C292 110.212 260.212 142 221 142C181.788 142 173 112 146 112C119 112 110.212 142 71 142Z"
           className={`transition-colors duration-400 ${
-            songAddStatus ? "fill-blue-600" : "fill-gray-300"
+            songAddStatus ? "fill-green-600" : "fill-gray-300"
           }`}
         />
 
@@ -81,7 +89,7 @@ const Switch = () => {
         <path
           d="M221 91C232.046 91 241 82.0457 241 71C241 59.9543 232.046 51 221 51C209.954 51 201 59.9543 201 71C201 82.0457 209.954 91 221 91ZM221 103C238.673 103 253 88.6731 253 71C253 53.3269 238.673 39 221 39C203.327 39 189 53.3269 189 71C189 88.6731 203.327 103 221 103Z"
           className={`transition-colors duration-400 ${
-            songAddStatus ? "fill-blue-600" : "fill-gray-100"
+            songAddStatus ? "fill-green-600" : "fill-gray-100"
           }`}
         />
       </svg>

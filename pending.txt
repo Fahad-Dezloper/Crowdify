@@ -1,20 +1,19 @@
-// improve the UI now
---> room page UI DOne
+
+
 --> move to dasboard page UI then landing page then auto add songs from search
 
 // add previous song play functionality in index.ts ws -- later now now 
 // launch it
-// test and make it ready for deployment
+
+
+
 // responsiveness for landing page
 topbar only on landing page
 
 
 msg kisne konsa bhja \\ direct add song from  search \\ no. of users \\ 
 
-
-// websocket closes first time and then reinitialized again. because of userId. so userId takes time to come and problem occurs. its because we are also trying to get who have upvoted or not to show in UI.
-
-backend is downnnnn
+rebuild the UI with animations
 
 
 

@@ -6,6 +6,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Music, Plus, Sparkles } from "lucide-react";
 import AudioVisualizer from "@/components/fancy/AudioVisulalizer";
+import Navbar from "../components/Navbar";
 
 const generateRoomId = () => {
   const characters = "abcdefghijklmnopqrstuvwxyz";
@@ -65,6 +66,8 @@ const Page = () => {
   const buttonOverlayClasses = "absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300";
 
   return (
+    <>
+      <Navbar />
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 md:p-8"
          style={{
            background: 'linear-gradient(to bottom, #0f1729, #1a103c)'
@@ -148,6 +151,7 @@ const Page = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

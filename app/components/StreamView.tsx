@@ -17,32 +17,20 @@ import LeftSidebar from "./leftSidebar";
 import TopBar from "./Topbar";
 import ChatBot from "./ChatBot";
 import { useWebSocket } from "../context/WebContext";
+import {motion} from 'framer-motion';
+import { toast } from "sonner"
 
 interface StreamViewProps {
     roomId: string;
 }
-// creatorId={userId} isAdmin={isAdmin} roomId={roomIdd}
 const StreamView = ({roomId}: StreamViewProps) => {
-    const [arr, setArr] = useState([])
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    const [likedSongs, setLikedSongs] = useState({});
-    // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
-    const [currentVideo, setCurrentVideo] = useState(true);
-    const [isUpvote, setIsUpvote] = useState(false);
-    const [playNextLoader, setPlayNextLoader] = useState(false);
     // @ts-ignore
     const {socket, creatorId, isAdmin, addSong} = useWebSocket();
 
     const addToQueue = async (e: React.FormEvent) => {
-        e.preventDefault();
-    
-        // console.log("Event triggered for addToQueue");
-        // console.log("creatorId:", creatorId);
-        // console.log("inputLink:", inputLink);
-        // console.log("roomId:", roomId);
-    
-        // Ensure values are defined
+        e.preventDefault(); 
         if (!creatorId || !inputLink || !roomId) {
             console.error("Missing required fields");
             return;
@@ -55,16 +43,15 @@ const StreamView = ({roomId}: StreamViewProps) => {
         });
     
         try {
-            const res = await fetch("/api/streams", { // Removed trailing slash
+            const res = await fetch("/api/streams", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Content-Length": bodyData.length.toString() // Optional fix for 411 error
+                    "Content-Length": bodyData.length.toString()
                 },
                 body: bodyData
             });
     
-            // Handle non-200 responses
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error("Error from API:", errorData);
@@ -72,7 +59,6 @@ const StreamView = ({roomId}: StreamViewProps) => {
             }
     
             const data = await res.json();
-            // console.log("Data received from BE stream:", data);
     
             if (socket) {
                 const response = await addSong({
@@ -81,24 +67,36 @@ const StreamView = ({roomId}: StreamViewProps) => {
                     thumbnail: data.bigImg,
                     streamId: data.id
                 });
-                // console.log("Socket response:", response);
+
+            toast("Song Added Successfully");
             } else {
                 console.error("Error: socket is not available");
+                toast("Websocket Connection not initialized")
             }
     
-            setInputLink(''); // Clear input field after success
+            setInputLink('');
     
         } catch (error) {
             console.error("Network or API error:", error);
+            toast("Error Adding Successfully")
         }
     };
 
     return (
-        <div className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] justify-between overflow-y-auto items-center">
-        
-        {/* Left Sidebar (For Large Screens) */}
-        <div className="hidden md:flex h-full">
-            <LeftSidebar 
+        <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] overflow-y-auto items-center"
+    >
+      {/* Left Sidebar (For Large Screens) */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="hidden md:flex h-full"
+      >
+        <LeftSidebar 
                 isAdmin={isAdmin} 
                 roomId={roomId} 
                 addToQueue={addToQueue}
@@ -106,45 +104,71 @@ const StreamView = ({roomId}: StreamViewProps) => {
                 YT_REGEX={YT_REGEX} 
                 setInputLink={setInputLink} 
             />
+      </motion.div>
+
+      <div className="w-full h-full flex py-1 flex-col overflow-hidden">
+        <TopBar userId={creatorId} />
+
+        {/* Left Sidebar Below Top Bar (For Small & Medium Screens) */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="md:hidden"
+        >
+          <LeftSidebar 
+                isAdmin={isAdmin} 
+                roomId={roomId} 
+                addToQueue={addToQueue}
+                inputLink={inputLink} 
+                YT_REGEX={YT_REGEX} 
+                setInputLink={setInputLink} 
+            />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex md:hidden my-4 bg-white p-2 rounded-2xl mx-2"
+        >
+          {isMobile && <MusicPlayer isAdmin={isAdmin} />}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-6 pt-1 pb-2 overflow-x-auto"
+        >
+          <Queue />
+        </motion.div>
+
+        <div className="flex flex-col md:flex-row w-full h-full overflow-hidden px-2 md:px-6 py-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="w-full"
+          >
+            <ChatBot isAdmin={isAdmin} />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="w-full md:flex hidden md:w-[40vw] h-full"
+          >
+            {!isMobile && (
+              <div className="w-full h-full bg-white rounded-2xl py-5 px-6">
+                <MusicPlayer isAdmin={isAdmin} />
+              </div>
+            )}
+          </motion.div>
         </div>
-
-        <div className="w-full h-full flex flex-col overflow-hidden">
-            <TopBar userId={creatorId} />
-
-            {/* Left Sidebar Below Top Bar (For Small & Medium Screens) */}
-            <div className="md:hidden">
-                <LeftSidebar 
-                    isAdmin={isAdmin} 
-                    roomId={roomId} 
-                    addToQueue={addToQueue} 
-                    inputLink={inputLink} 
-                    YT_REGEX={YT_REGEX} 
-                    setInputLink={setInputLink} 
-                />
-            </div>
-
-                <div className="flex md:hidden my-4 bg-white p-2 rounded-2xl mx-2">
-                {isMobile && <MusicPlayer isAdmin={isAdmin} />}
-                </div>
-
-            <div className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-6 pt-1 pb-2 overflow-x-auto">
-                <Queue />
-            </div>
-
-            <div className="flex flex-col md:flex-row w-full h-full overflow-hidden px-2 md:px-6 py-2 gap-4">
-                <ChatBot isAdmin={isAdmin} />
-
-                <div className="w-full md:flex hidden md:w-[40vw] h-full">
-                {!isMobile && (
-                        <div className="w-full h-full bg-white rounded-2xl py-5 px-6">
-                            <MusicPlayer isAdmin={isAdmin} />
-                        </div>
-                    )}
-
-                </div>
-            </div>
-        </div>
-    </div>
+      </div>
+    </motion.div>
     )
 }
 

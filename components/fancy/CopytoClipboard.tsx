@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 interface CopyButtonProps {
   roomId: string;
@@ -15,12 +16,11 @@ const CopyButton = ({ roomId }: CopyButtonProps) => {
       console.error('Failed to copy text: ', err);
     });
     
-    // Force the copied state to true regardless of clipboard API success
     setCopied(true);
+    toast("RoomId Copied Successfully");
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Generate particles only when copied state changes to true
   const renderParticles = () => {
     if (!copied) return null;
     
@@ -63,7 +63,6 @@ const CopyButton = ({ roomId }: CopyButtonProps) => {
   };
 
   return (
-    // <div className="flex items-center justify-center w-full h-screen bg-gray-900">
       <div className="relative">
         <button 
           onClick={handleCopy}
@@ -94,10 +93,8 @@ const CopyButton = ({ roomId }: CopyButtonProps) => {
           )}
         </AnimatePresence>
 
-        {/* Animated particles */}
         {renderParticles()}
       </div>
-    // {/* </div> */}
   );
 };
 
