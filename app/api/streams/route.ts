@@ -25,17 +25,21 @@ function extractVideoId(url: string) {
 
 
 export async function POST(req: NextRequest) {
+    const det = await req.json();
+    console.log("data is det", det);
     try {
-        const rawBody = await req.json();
+        const rawBody = det;
         console.log("Received raw data:", rawBody);
 
         const data = rawBody;
 
         const extractedId = extractVideoId(data.url);
         console.log('extractedId is', extractedId);
+        
         if (!extractedId) {
             throw new Error("Invalid video ID extracted from the URL");
         }
+
         const res = await youtube.getVideo(extractedId);
 
         console.log(res?.title)
