@@ -24,6 +24,7 @@ interface StreamViewProps {
 // creatorId={userId} isAdmin={isAdmin} roomId={roomIdd}
 const StreamView = ({roomId}: StreamViewProps) => {
     const [arr, setArr] = useState([])
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     const [likedSongs, setLikedSongs] = useState({});
     // const musicRef = useRef(null);
     const [inputLink, setInputLink] = useState("");
@@ -89,7 +90,7 @@ const StreamView = ({roomId}: StreamViewProps) => {
             </div>
 
                 <div className="flex md:hidden my-4 bg-white p-2 rounded-2xl mx-2">
-                    <MusicPlayer isAdmin={isAdmin}/>
+                {isMobile && <MusicPlayer isAdmin={isAdmin} />}
                 </div>
 
             <div className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-6 pt-1 pb-2 overflow-x-auto">
@@ -100,9 +101,12 @@ const StreamView = ({roomId}: StreamViewProps) => {
                 <ChatBot isAdmin={isAdmin} />
 
                 <div className="w-full md:flex hidden md:w-[40vw] h-full">
-                    <div className="w-full h-full bg-white rounded-2xl py-5 px-6">
-                        <MusicPlayer isAdmin={isAdmin} />
-                    </div>
+                {!isMobile && (
+                        <div className="w-full h-full bg-white rounded-2xl py-5 px-6">
+                            <MusicPlayer isAdmin={isAdmin} />
+                        </div>
+                    )}
+
                 </div>
             </div>
         </div>
