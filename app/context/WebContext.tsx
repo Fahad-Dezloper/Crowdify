@@ -145,7 +145,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
     };
   
     const addSong = (song: any) => {
-      console.log("added song event happended", song);
+      // console.log("added song event happended", song);
       if (wsRef.current) {
         wsRef.current.send(JSON.stringify({ type: "addSong", song, roomId }));
       }

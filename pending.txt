@@ -9,6 +9,8 @@
 topbar only on landing page
 
 
+msg kisne konsa bhja \\ direct add song from  search \\ no. of users \\ 
+
 
 // websocket closes first time and then reinitialized again. because of userId. so userId takes time to come and problem occurs. its because we are also trying to get who have upvoted or not to show in UI.
 
@@ -34,3 +36,6 @@ DATABASE_URL="postgresql://neondb_owner:npg_ErB2jdvW3xRL@ep-dark-morning-a5pzbtc
 // const redisClient = redis.createClient({
 //   url: process.env.REDIS_URL || "redis://default:sWrKlxRDRDgnAToHfBHWSlzlwzoZVYFa@tramway.proxy.rlwy.net:15775"
 // });
+
+
+two video player both playing. stop one laptop || song add by user gets paused when i allow with error || song undefined data when send

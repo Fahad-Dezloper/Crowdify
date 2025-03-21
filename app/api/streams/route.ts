@@ -10,10 +10,9 @@ function extractVideoId(url: string | null) {
 
 export async function POST(req: NextRequest) {
     const det = await req.json();
-    console.log("Received data:", det);
+    // console.log("Received data:", det);
 
     try {
-
         if(!det.url){
             return console.error("url not there");
         }
@@ -21,7 +20,7 @@ export async function POST(req: NextRequest) {
         const extractedId = extractVideoId(det.url);
         const query = extractedId;
 
-        console.log("Searching YouTube for:", query);
+        // console.log("Searching YouTube for:", query);
 
         // Fetch search results
         if (!query) {
@@ -39,8 +38,8 @@ export async function POST(req: NextRequest) {
         const bigImg = video.snippet.thumbnails?.high?.url || 
             "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png";
 
-        console.log("Fetched video title:", videoTitle);
-        console.log("Fetched thumbnail:", bigImg);
+        // console.log("Fetched video title:", videoTitle);
+        // console.log("Fetched thumbnail:", bigImg);
 
         return NextResponse.json({
             message: "Added Stream",

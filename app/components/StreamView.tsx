@@ -37,10 +37,10 @@ const StreamView = ({roomId}: StreamViewProps) => {
     const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
     
-        console.log("Event triggered for addToQueue");
-        console.log("creatorId:", creatorId);
-        console.log("inputLink:", inputLink);
-        console.log("roomId:", roomId);
+        // console.log("Event triggered for addToQueue");
+        // console.log("creatorId:", creatorId);
+        // console.log("inputLink:", inputLink);
+        // console.log("roomId:", roomId);
     
         // Ensure values are defined
         if (!creatorId || !inputLink || !roomId) {
@@ -72,7 +72,7 @@ const StreamView = ({roomId}: StreamViewProps) => {
             }
     
             const data = await res.json();
-            console.log("Data received from BE stream:", data);
+            // console.log("Data received from BE stream:", data);
     
             if (socket) {
                 const response = await addSong({
@@ -81,7 +81,7 @@ const StreamView = ({roomId}: StreamViewProps) => {
                     thumbnail: data.bigImg,
                     streamId: data.id
                 });
-                console.log("Socket response:", response);
+                // console.log("Socket response:", response);
             } else {
                 console.error("Error: socket is not available");
             }
