@@ -11,7 +11,7 @@ import { getServerSession } from "next-auth";
 const youtube = new Client();
 const music = new MusicClient();
 
-
+// no video id is here
 const CreateStreamSchema = z.object({
     creatorId: z.string() || null,
     url: z.string(),
