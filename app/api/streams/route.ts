@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 function extractVideoId(url: string | null) {
-    const match = url.match(/(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|\/e\/|watch\?v=|watch\?.+&v=)([^&]+)/);
+    const match = url ? url.match(/(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|\/e\/|watch\?v=|watch\?.+&v=)([^&]+)/) : null;
     return match ? match[1] : null;
 }
 
@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
         console.log("Searching YouTube for:", query);
 
         // Fetch search results
+        if (!query) {
+            throw new Error("Invalid query: Video ID could not be extracted.");
+        }
         const results = await search(query);
 
         if (!results || results.length === 0) {
@@ -33,7 +36,7 @@ export async function POST(req: NextRequest) {
         // Get the first video result
         const video = results[0];
         const videoTitle = video.title;
-        const bigImg = video.thumbnail || 
+        const bigImg = video.snippet.thumbnails?.high?.url || 
             "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png";
 
         console.log("Fetched video title:", videoTitle);
@@ -51,7 +54,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 message: "Error while fetching video details",
-                error: e.message || e,
+                error: e,
             },
             { status: 500 }
         );
