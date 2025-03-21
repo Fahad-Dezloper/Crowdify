@@ -36,28 +36,62 @@ const StreamView = ({roomId}: StreamViewProps) => {
 
     const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
-        // console.log("event hapend for add to queue");data rec for sending in ws
-        const res = await fetch("/api/streams/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                creatorId: creatorId,
-                url: inputLink,
-                roomId: roomId
-            })
-        });
-        const data = await res.json();
-        console.log("data received from BE stream:- ", data);
-
-        if(socket){
-            // console.log("socket is here or not", socket);
-            const response = await addSong({url: inputLink, title: data.title, thumbnail: data.bigImg, streamId: data.id});
-            // console.log("socket response", response);
-        }else{
-            console.error("error seding socket event");
+    
+        console.log("Event triggered for addToQueue");
+        console.log("creatorId:", creatorId);
+        console.log("inputLink:", inputLink);
+        console.log("roomId:", roomId);
+    
+        // Ensure values are defined
+        if (!creatorId || !inputLink || !roomId) {
+            console.error("Missing required fields");
+            return;
         }
-        setInputLink('');
-    }
+    
+        const bodyData = JSON.stringify({
+            creatorId,
+            url: inputLink,
+            roomId
+        });
+    
+        try {
+            const res = await fetch("/api/streams", { // Removed trailing slash
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Content-Length": bodyData.length.toString() // Optional fix for 411 error
+                },
+                body: bodyData
+            });
+    
+            // Handle non-200 responses
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error("Error from API:", errorData);
+                return;
+            }
+    
+            const data = await res.json();
+            console.log("Data received from BE stream:", data);
+    
+            if (socket) {
+                const response = await addSong({
+                    url: inputLink,
+                    title: data.title,
+                    thumbnail: data.bigImg,
+                    streamId: data.id
+                });
+                console.log("Socket response:", response);
+            } else {
+                console.error("Error: socket is not available");
+            }
+    
+            setInputLink(''); // Clear input field after success
+    
+        } catch (error) {
+            console.error("Network or API error:", error);
+        }
+    };
 
     return (
         <div className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] justify-between overflow-y-auto items-center">

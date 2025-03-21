@@ -26,18 +26,10 @@ function extractVideoId(url: string) {
 
 export async function POST(req: NextRequest) {
     try {
-        // ✅ First, log the raw request body before parsing
         const rawBody = await req.json();
         console.log("Received raw data:", rawBody);
 
-        // ✅ Now parse it
         const data = rawBody;
-
-        // if (!data.url.match(YT_REGEX)) {
-        //     return NextResponse.json({ message: "Wrong URL format" }, { status: 411 });
-        // }
-
-        // console.log("reached here to add");
 
         const extractedId = extractVideoId(data.url);
         console.log('extractedId is', extractedId);
@@ -45,36 +37,9 @@ export async function POST(req: NextRequest) {
             throw new Error("Invalid video ID extracted from the URL");
         }
         const res = await youtube.getVideo(extractedId);
-        // console.log("YouTube API Response:", res);
-
-        // const thumbnails = res.thumbnail.thumbnails;
-        // console.log("data thumb", thumbnails);
-
-        // thumbnails.sort((a: { width: number }, b: { width: number }) => (a.width < b.width ? -1 : 1));
-
-        // const stream = await prismaClient.stream.create({
-        //     data: {
-        //         url: data.url,
-        //         extractedId,
-        //         type: "Youtube",
-        //         title: res?.title ?? "Can't find your song",
-        //         smallImg:
-        //             res?.thumbnails[0].url ??
-        //             "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
-        //         bigImg:
-        //             res?.thumbnails[res.thumbnails.length - 1].url ??
-        //             "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
-        //         room: {
-        //             connect: {
-        //                 code: data.roomId
-        //             }
-        //         }
-        //     }
-        // });
 
         console.log(res?.title)
         console.log(res?.thumbnails[res.thumbnails.length - 1].url)
-        // console.log("Stream successfully added:", stream);
 
         return NextResponse.json({
             message: "Added Stream",
