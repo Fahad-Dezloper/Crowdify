@@ -2,7 +2,7 @@ import { search } from "youtube-search-without-api-key";
 import { NextRequest, NextResponse } from "next/server";
 
 
-function extractVideoId(url: string) {
+function extractVideoId(url: string | null) {
     const match = url.match(/(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|\/e\/|watch\?v=|watch\?.+&v=)([^&]+)/);
     return match ? match[1] : null;
 }
