@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
 
     try {
 
+        if(!det.url){
+            return console.error("url not there");
+        }
+
         const extractedId = extractVideoId(det.url);
         const query = extractedId;
 
