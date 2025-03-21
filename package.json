@@ -31,6 +31,7 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.174.0",
     "youtube-search-api": "^1.2.2",
+    "youtube-search-without-api-key": "^2.0.1",
     "youtubei": "^1.6.7",
     "ytdl-core": "^4.11.5",
     "zod": "^3.24.1"
