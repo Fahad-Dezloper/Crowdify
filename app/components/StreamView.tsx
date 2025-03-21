@@ -11,7 +11,6 @@ import { useEffect, useRef, useState } from "react"
 import {z} from 'zod'
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
 import { YT_REGEX } from "@/lib/utils";
-import Image from "next/image";
 import MusicPlayer from "./MusicPlayer";
 import Queue from "./Queue";
 import LeftSidebar from "./leftSidebar";
@@ -20,12 +19,10 @@ import ChatBot from "./ChatBot";
 import { useWebSocket } from "../context/WebContext";
 
 interface StreamViewProps {
-    creatorId: string;
-    isAdmin: boolean;
     roomId: string;
 }
-
-const StreamView = ({creatorId, isAdmin, roomId}: StreamViewProps) => {
+// creatorId={userId} isAdmin={isAdmin} roomId={roomIdd}
+const StreamView = ({roomId}: StreamViewProps) => {
     const [arr, setArr] = useState([])
     const [likedSongs, setLikedSongs] = useState({});
     // const musicRef = useRef(null);
@@ -34,45 +31,11 @@ const StreamView = ({creatorId, isAdmin, roomId}: StreamViewProps) => {
     const [isUpvote, setIsUpvote] = useState(false);
     const [playNextLoader, setPlayNextLoader] = useState(false);
     // @ts-ignore
-    const {socket} = useWebSocket();
-    
-
-    // function handleVote(item) {
-    //     console.log("Voting for stream:", item);
-        
-    //     try {
-    //         fetch(`/api/streams/vote`, {
-    //             method: "POST",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify({ item }),
-    //         })
-    //         .then(res => res.json())
-    //         .then(response => {
-    //             console.log(response.message);
-                
-    //             if (socket) {
-    //                 socket.send(JSON.stringify({
-    //                     type: "voteUpdate",
-    //                     song: item,
-    //                     upvoteCount: response.upvoteCount 
-    //                 }));
-    //             }
-    
-    //             setLikedSongs(prev => ({ ...prev, [item.streamId]: !prev[item.streamId] }));
-    //             PlayNext();
-    //         })
-    //         .catch(error => {
-    //             console.error("Error in handleVote:", error);
-    //         });
-    
-    //     } catch (e) {
-    //         console.error("Error in handleVote:", e);
-    //     }
-    // }     
+    const {socket, creatorId, isAdmin, addSong} = useWebSocket();
 
     const addToQueue = async (e: React.FormEvent) => {
         e.preventDefault();
-
+        console.log("event hapend for add to queue");
         const res = await fetch("/api/streams/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -86,58 +49,14 @@ const StreamView = ({creatorId, isAdmin, roomId}: StreamViewProps) => {
         console.log("data received from BE stream:- ", data);
 
         if(socket){
-            socket.send(
-                JSON.stringify({
-                    type: "addSong",
-                    roomId: roomId,
-                    song: {
-                        url: inputLink,
-                        title: data.title,      
-                        thumbnail: data.bigImg,
-                        streamId: data.id
-                    },
-                })
-            )
+            // console.log("socket is here or not", socket);
+            const response = await addSong({url: inputLink, title: data.title, thumbnail: data.bigImg, streamId: data.id});
+            // console.log("socket response", response);
+        }else{
+            console.error("error seding socket event");
         }
         setInputLink('');
     }
-
-// const PlayNext = async () => {
-//             try {
-//                 setPlayNextLoader(true);
-
-//                 //delete the song
-//                 if(currentVideo !== null){
-//                     const remove = await axios.post('/api/streams/rm', currentVideo);
-//                     if(socket){
-//                         socket.send(
-//                             JSON.stringify({
-//                                 type: "updateQueue",
-//                                 roomId: roomId,
-//                                 song: {
-//                                     currentVideo: currentVideo
-//                                 }
-//                             })
-//                         )
-//                     }
-//                 }
-
-//                 //next most upvoted song
-//                 const data = await axios.get('/api/streams/next', {
-//                     params: {
-//                         roomId: roomId
-//                     }
-//                 })
-
-//                 console.log("bhai json laaya hu", data);
-
-//                 setCurrentVideo(data.data.stream);
-//             } catch (error) {
-//                 console.log(error);
-//             } finally{
-//                 setPlayNextLoader(false)
-//             }
-// }
 
     return (
         <div className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] justify-between overflow-y-auto items-center">
@@ -147,7 +66,7 @@ const StreamView = ({creatorId, isAdmin, roomId}: StreamViewProps) => {
             <LeftSidebar 
                 isAdmin={isAdmin} 
                 roomId={roomId} 
-                addToQueue={addToQueue} 
+                addToQueue={addToQueue}
                 inputLink={inputLink} 
                 YT_REGEX={YT_REGEX} 
                 setInputLink={setInputLink} 

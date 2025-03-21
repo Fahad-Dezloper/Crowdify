@@ -5,7 +5,7 @@ import React from "react";
 const Switch = () => {
   // @ts-ignore
   const { allowSongAdd, songAddStatus } = useWebSocket();
-  console.log("from switch component", songAddStatus);
+  // console.log("from switch component", songAddStatus);
 
   return (
     <div className="relative aspect-[292/142] h-7">

@@ -15,7 +15,7 @@ interface WebSocketContextProps {
 const WebSocketContext = createContext<WebSocketContextProps | undefined>(undefined);
 
 // @ts-ignore
-export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode}) => {
+export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: string; userId: string }> = ({children, roomId, userId}: {children: React.ReactNode}) => {
   const [queue, setQueue] = useState<any[]>([])
   const [messages, setMessages] = useState<string[]>([]);
   const [nowPlaying, setNowPlaying] = useState(null);
@@ -24,22 +24,38 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     // const [input, setInput] = useState("");
     const [roomData, setRoomData] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [userId, setUserId] = useState(null);
+    const [creatorId, setCreatorId] = useState(null);
+    // const [userId, setUserId] = useState(null);
     const [userDets, setUserDets] = useState(null);
     const [chatPaused, setChatPaused] = useState(false);
     const [songAddStatus, setSongAddStatus] = useState(false);
     const [roomIdd, setRoomIdd] = useState<string | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
-
+  // alert("here baby0");
     // console.log("response from roomId", roomId);
 
     const fetchDets = async () => {
       // @ts-ignore
-        const res = await fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId, setUserDets);
-        // console.log("res from /api/room:-", res);
-        // @ts-ignore
-        setRoomData(res);
+        try{
+          const res = await fetchRoomDetails(roomId);
+          console.log("res from /api/room:-", res);
+          setRoomData(res?.room.room);
+          setIsAdmin(res?.room.isAdmin);
+          // setUserId(res?.room.userId);
+          setRoomData(res?.room);
+          setUserDets(res?.user);
+          setCreatorId(res?.room.room.adminId);
+        } catch {
+          console.log("error while fetching from context")
+        }
     }
+
+    
+    // setRoomData(res.data.room); 
+    // setIsAdmin(res.data.isAdmin);
+    // setUserId(res.data.userId);
+    // setRoomData(res);
+    // setUserDets(userDetails);
 
     useEffect(() => {
       if (roomId) {
@@ -48,20 +64,25 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     }, [roomId]);
 
     useEffect(() => {
-        if (!roomId) return;
-
-        if (!process.env.WS_URL) {
-          console.error("WebSocket URL is not defined in environment variables.");
-          return;
+        if (!roomId || !userId) {
+          console.error("Either room id or userId is not there",  userId, roomId);
         }
-        const ws = new WebSocket(process.env.WS_URL);
+
+        // if (!process.env.WS_URL) {
+        //   console.error("WebSocket URL is not defined in environment variables.");
+        //   return;
+        // }
+        console.log("we cam ehre to call", userId);
+        // const ws = new WebSocket(process.env.WS_URL);
         // const ws = new WebSocket("ws://localhost:4000");
+        const ws = new WebSocket("wss://adcc-110-235-239-186.ngrok-free.app");
 
         wsRef.current = ws;
 
         ws.onopen = () => {
-          console.log("Connected to WebSocket");
-          ws.send(JSON.stringify({ type: "join", roomId: roomId }));
+          console.log("Connected to WebSocket", ws);
+          setSocket(ws);
+          ws.send(JSON.stringify({ type: "join", roomId: roomId, userId: userId }));
         };
 
         ws.onmessage = (event) => {
@@ -111,10 +132,10 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
           setSocket(null);
         };
 
-        setSocket(ws);
         return () => {
           ws.close();
         };
+
     }, [roomId]);
 
     const sendMessage = (text: any, sender: any) => {
@@ -124,13 +145,14 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     };
   
     const addSong = (song: any) => {
+      console.log("added song event happended", song);
       if (wsRef.current) {
-        wsRef.current.send(JSON.stringify({ type: "addSong", song }));
+        wsRef.current.send(JSON.stringify({ type: "addSong", song, roomId }));
       }
     };
   
     const upvoteSong = (songId: unknown, userId: any) => {
-      // console.log("here yo wassup", songId, "here i am", userId);
+      console.log("here yo wassup", songId, "here i am", userId);
       
       if (!songId || !userId) return;
     
@@ -215,7 +237,7 @@ export const WebSocketProvider = ({children, roomId}: {children: React.ReactNode
     
       return (
         // @ts-ignore
-        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus, userDets }}>
+        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus, userDets, creatorId }}>
           {children}
         </WebSocketContext.Provider>
       );

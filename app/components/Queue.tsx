@@ -10,16 +10,18 @@ import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from
 const Queue = () => {
   // @ts-ignore
     const { queue, upvoteSong, userUpvotes, setUserUpvotes, userId } = useWebSocket();
-    console.log("haa bhai liked", queue);
+    // console.log("haa bhai liked", queue);
     const handleUpvote = (songId: unknown) => {
         // console.log("called");
-        if (!songId || !userId) return;
-    
+        if (!songId || !userId) {
+          return console.error("something missing");
+        };
+      // console.log("called again");
         const newUpvotes = new Set(userUpvotes);
         if (newUpvotes.has(songId)) {
-          newUpvotes.delete(songId); // Remove vote
+          newUpvotes.delete(songId);
         } else {
-          newUpvotes.add(songId); // Add vote
+          newUpvotes.add(songId);
         }
     
         setUserUpvotes(newUpvotes);
@@ -44,6 +46,7 @@ const Queue = () => {
         <div className="bg-white flex flex-col md:gap-2 gap-4 pb-4 pt-4 overflow-x-auto scrolll px-6 rounded-2xl w-full h-full">
             <div className="w-full flex justify-between items-center">
                         <h1 className="text-xl font-roboto font-semibold">Next in Row</h1> 
+                        {/* {userId ? userId : "no user id"} */}
                         <div className="flex items-center gap-3">
                             <div className="p-2 border-2 rounded-full cursor-pointer hover:bg-gray-200 duration-200 ease-in-out">
                                 <ChevronLeft size={18} className="" />
@@ -56,12 +59,11 @@ const Queue = () => {
 
             <div className="flex overflow-auto items-end w-full gap-3 scrolll h-full">
             {queue.length > 0 ? (
-        queue.map((item: { thumbnail: string | undefined; title: any; upvoteCount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; streamId: unknown; }, index: Key | null | undefined) => (
+        queue.map((item: { thumbnail: string | undefined;hasLiked: boolean; title: any; upvoteCount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; streamId: unknown; }, index: Key | null | undefined) => (
           <div
             key={index}
             className="flex flex-col min-w-[33vw] max-w-[35vw] md:min-w-0 md:w-[13vw] gap-4 border h-full rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
           >
-            {/* 🔥 Song Thumbnail & Title */}
             <div className="flex flex-col items-center gap-2 h-full">
               <div className="min-w-[12vw] min-h-[12vh] rounded-xl overflow-hidden">
                 <img
@@ -83,8 +85,8 @@ const Queue = () => {
 
               <button
                 onClick={() => handleUpvote(item.streamId)}
-                className={`px-2 py-1 rounded-md transition-transform duration-200 active:scale-90 text-white ${
-                  userUpvotes.has(item.streamId) ? "bg-green-500" : "bg-gray-200 text-black"
+                className={`px-2 py-1 rounded-md transition-transform duration-200 active:scale-90 ${
+                  item.hasLiked || userUpvotes.has(item.streamId) ? "bg-green-500 text-white" : "bg-gray-200 text-black"
                 }`}
               >
                 <ChevronUp className={`${userUpvotes.has(item.streamId) ? "text-white" : "text-gray-400"}`} />

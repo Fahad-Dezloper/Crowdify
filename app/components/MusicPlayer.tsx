@@ -15,7 +15,7 @@ interface MusicPlayerProps {
 const MusicPlayer = ({ isAdmin }: MusicPlayerProps) => {
   // @ts-ignore
   const {nowPlaying, nextSong, prevSong, userDets} = useWebSocket()
-  console.log("now playing event happened", nowPlaying);
+  // console.log("now playing event happened", userDets);
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0)
@@ -117,7 +117,7 @@ const MusicPlayer = ({ isAdmin }: MusicPlayerProps) => {
           <div className="relative border-2 shadow-lg rounded-lg w-full max-w-xs sm:max-w-sm">
             <img src="/fallback2.svg" alt="fallback" className="w-full object-contain" />
             <span className="absolute bottom-6 left-[30%] sm:left-[35%] font-bold text-xl sm:text-2xl text-blue-400">
-              {userDets ? userDets.data.user.name.split(" ")[0] : "⭐"}
+              {userDets ? userDets.user.name.split(" ")[0] : "⭐"}
             </span>
           </div>
           <button

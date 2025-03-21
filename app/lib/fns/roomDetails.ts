@@ -2,20 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosResponse } from "axios";
-import { SetStateAction } from "react";
 
 // @ts-ignore
-export const fetchRoomDetails = async (roomId: string | string[] | undefined, setRoomData: { (value: SetStateAction<null>): void; (arg0: any): void; }, setIsAdmin: { (value: SetStateAction<boolean>): void; (arg0: any): void; }, setUserId, setUserDets) => {
+export const fetchRoomDetails = async (roomId: string | string[] | undefined) => {
     try {
-        const res = await axios.get(`/api/room/${roomId}`);
-        // console.log("res from /api/room:-", res);
-        setRoomData(res.data.room); 
-        setIsAdmin(res.data.isAdmin);
-        setUserId(res.data.userId);
+      const [roomResponse, userResponse] = await Promise.all([
+        axios.get(`/api/room/${roomId}`),
+        axios.get("/api/user/fetchUser")
+    ]);
 
-        const userDetails = await axios.get("/api/user/fetchUser");
-        // console.log("user details are", userDetails);
-        setUserDets(userDetails);
+    // console.log("Room details response:", roomResponse);
+    // console.log("User details response:", userResponse);
+
+    return {
+        room: roomResponse.data,
+        user: userResponse.data
+    };
 
       } catch (err) {
         console.log("error", err);

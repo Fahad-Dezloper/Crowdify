@@ -2,43 +2,48 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import * as React from 'react';
-import ChatBot from "@/app/components/ChatBot";
 import { useEffect, useState } from "react";
 import { useParams } from 'next/navigation';
-import { fetchRoomDetails } from '@/app/lib/fns/roomDetails';
 import { WebSocketProvider } from '@/app/context/WebContext';
 import StreamView from '@/app/components/StreamView';
+import axios from 'axios';
 
 const RoomPage = () => {
   const { roomId } = useParams();
-  // const [socket, setSocket] = useState<WebSocket | null>(null);
-  // const [messages, setMessages] = useState<string[]>([]);
   const [roomIdd, setRoomIdd] = useState<string | null>(null);
-  // const [input, setInput] = useState("");
-  const [roomData, setRoomData] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [userDets, setUserDets] = useState(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  async function fetchUser() {
+    try {
+      const res = await axios.get("/api/user/fetchUser");
+      console.log("res from room page", res);
+      setUserId(res.data.user.id);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (roomId) {
-      // console.log("roomId.roomId", roomId);
       setRoomIdd(Array.isArray(roomId) ? roomId[0] : roomId);
+      fetchUser();
     }
-    fetchRoomDetails(roomId, setRoomData, setIsAdmin, setUserId, setUserDets);
   }, [roomId]);
-  
+
+  if (!roomIdd || !userId || loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    // @ts-ignore
-    <WebSocketProvider roomId={roomIdd}>
-    <div className="w-full h-full overflow-y-auto">
-      {/* @ts-ignore */}
-      <StreamView creatorId={userId} isAdmin={isAdmin} roomId={roomIdd} />
-    </div>
+    <WebSocketProvider roomId={roomIdd} userId={userId}>
+      <div className="w-full h-full overflow-y-auto">
+        <StreamView roomId={roomIdd} />
+      </div>
     </WebSocketProvider>
   );
 };
 
 export default RoomPage;
-
