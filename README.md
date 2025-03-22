@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Crowdify - Collaborative Music Streaming Platform
 
-## Getting Started
+Crowdify is a real-time music streaming platform where users can create rooms, invite others to join, add songs, and upvote tracks. The most upvoted song gets played automatically. It also features an AI chatbot for assistance and engagement.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 🎵 **Create and Join Rooms**: Users can create rooms or join existing ones.
+- 📌 **Add Songs**: Anyone in the room can add songs to the queue.
+- 👍 **Upvote Songs**: The song with the highest votes plays next.
+- 🤖 **Chat box**: Real Time chatbox.
+- 🔄 **Real-time Updates**: WebSockets ensure instant updates on song queues and votes.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![image](https://github.com/user-attachments/assets/df99912c-3181-490b-8996-c47495fa93b6)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
+- **Frontend**: Next.js, React, TailwindCSS
+- **Backend**: https://github.com/Fahad-Dezloper/crowdify-backend [ REDIS, WEBSOCKET ]
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: NextAuth / OAuth
+- **Streaming API**: YouTube API
 
-To learn more about Next.js, take a look at the following resources:
+## Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/crowdify.git
+   cd crowdify
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Install dependencies:
+   ```sh
+   pnpm install
+   ```
 
-## Deploy on Vercel
+3. Set up environment variables in a `.env` file check `.env.example`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Start the development server:
+   ```sh
+   pnpm run dev
+   ```
+
+## Usage
+
+1. Create a new room and invite others.
+2. Add songs to the playlist.
+3. Upvote songs to determine the next track.
+4. Interact with the others through chatbox
+
+## Contributing
+
+Contributions are welcome! Feel free to fork the repo, make improvements, and submit a PR.
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+🚀 **Enjoy collaborative music streaming with Crowdify!**
