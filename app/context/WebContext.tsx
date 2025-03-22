@@ -27,7 +27,12 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
     const [isAdmin, setIsAdmin] = useState(false);
     const [creatorId, setCreatorId] = useState(null);
     // const [userId, setUserId] = useState(null);
-    const [userDets, setUserDets] = useState(null);
+    interface UserDetails {
+      user: {
+        email: string;
+      };
+    }
+    const [userDets, setUserDets] = useState<UserDetails | null>(null);
     const [userCount, setUsersCount] = useState(0);
     const [chatPaused, setChatPaused] = useState(false);
     const [songAddStatus, setSongAddStatus] = useState(false);
@@ -144,7 +149,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
 
     }, [roomId]);
 
-    const sendMessage = (text: any, sender: any = userDets.user.email) => {
+    const sendMessage = (text: any, sender: any = userDets?.user?.email || "unknown") => {
       if (wsRef.current) {
         wsRef.current.send(JSON.stringify({ type: "message", text, sender }));
       }
