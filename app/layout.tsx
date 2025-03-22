@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Funnel_Display, Roboto } from "next/font/google";
 import "./globals.css";
 import { Provider } from "./Provider";
-import Navbar from "./components/Navbar";
 import { Toaster } from "@/components/ui/sonner"
 import FeedbackComponent from "./components/feedback";
 
