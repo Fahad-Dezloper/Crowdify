@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWebSocket } from "../context/WebContext";
 import Switch from "@/components/fancy/Button";
 
@@ -20,6 +20,7 @@ const ChatBot = ({ isAdmin }: ChatBotProps) => {
     chatPaused: boolean;
   };
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   // console.log("chat paused fn", messages);
     const handleSend = () => {
       if (input.trim()) {
@@ -27,6 +28,10 @@ const ChatBot = ({ isAdmin }: ChatBotProps) => {
         setInput("");
       }
     };
+
+    useEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
     
     return (
       <div className="w-full h-full overflow-hidden">
@@ -55,6 +60,8 @@ const ChatBot = ({ isAdmin }: ChatBotProps) => {
         
         </div>
       )}
+
+<div ref={messagesEndRef} />
     </div>
 
     <div className="w-full h-fit flex gap-2 sm:gap-4 items-center p-2 sm:p-4">
