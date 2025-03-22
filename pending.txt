@@ -4,16 +4,13 @@
 
 // add previous song play functionality in index.ts ws -- later now now 
 // launch it
-
-
-
 // responsiveness for landing page
-topbar only on landing page
-
-
-msg kisne konsa bhja \\ direct add song from  search \\ no. of users \\ 
-
+msg kisne konsa bhja \\ no. of users \\ 
 rebuild the UI with animations
+
+- done
+direct add song from  search
+topbar only on landing page
 
 
 
@@ -38,3 +35,18 @@ DATABASE_URL="postgresql://neondb_owner:npg_ErB2jdvW3xRL@ep-dark-morning-a5pzbtc
 
 
 two video player both playing. stop one laptop || song add by user gets paused when i allow with error || song undefined data when send
+
+
+
+
+landing page things
+
+   {/* section 3 */}
+    {/* <div className='w-screen h-fit z-30 bg-black'>
+        <StickyScrollRevealDemo />
+    </div> */}
+
+    {/* section 4 */}
+    {/* <div className='w-screen h-screen z-30 bg-black text-6xl font-funnel flex items-center justify-center text-white'>
+      Reviews
+    </div> */}

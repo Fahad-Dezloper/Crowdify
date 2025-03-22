@@ -4,6 +4,7 @@ import "./globals.css";
 import { Provider } from "./Provider";
 import Navbar from "./components/Navbar";
 import { Toaster } from "@/components/ui/sonner"
+import FeedbackComponent from "./components/feedback";
 
 const funnelDisplay = Funnel_Display({
   subsets: ["latin"],
@@ -36,6 +37,7 @@ export default function RootLayout({
       >
         <Provider>
           <Toaster />
+          <FeedbackComponent />
         {children}
         </Provider>
       </body>

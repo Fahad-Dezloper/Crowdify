@@ -87,7 +87,7 @@ const StreamView = ({roomId}: StreamViewProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] overflow-y-auto items-center"
+      className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] overflow-y-auto"
     >
       {/* Left Sidebar (For Large Screens) */}
       <motion.div
@@ -109,7 +109,6 @@ const StreamView = ({roomId}: StreamViewProps) => {
       <div className="w-full h-full flex py-1 flex-col overflow-hidden">
         <TopBar userId={creatorId} />
 
-        {/* Left Sidebar Below Top Bar (For Small & Medium Screens) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -130,7 +129,7 @@ const StreamView = ({roomId}: StreamViewProps) => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex md:hidden my-4 bg-white p-2 rounded-2xl mx-2"
+          className="flex md:hidden my-4 p-2 rounded-2xl mx-2"
         >
           {isMobile && <MusicPlayer isAdmin={isAdmin} />}
         </motion.div>
@@ -139,12 +138,12 @@ const StreamView = ({roomId}: StreamViewProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-6 pt-1 pb-2 overflow-x-auto"
+          className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-4 pt-1 pb-2 overflow-x-auto"
         >
           <Queue />
         </motion.div>
 
-        <div className="flex flex-col md:flex-row w-full h-full overflow-hidden px-2 md:px-6 py-2 gap-4">
+        <div className="flex flex-col md:flex-row w-full h-full overflow-hidden px-2 md:px-4 py-2 gap-4">
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -161,9 +160,9 @@ const StreamView = ({roomId}: StreamViewProps) => {
             className="w-full md:flex hidden md:w-[40vw] h-full"
           >
             {!isMobile && (
-              <div className="w-full h-full bg-white rounded-2xl py-5 px-6">
-                <MusicPlayer isAdmin={isAdmin} />
-              </div>
+              <div className="w-full h-full rounded-2xl z-30 py-5 px-6 relative overflow-hidden shadow-lg before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-2xl before:border-transparent before:shadow-[inset_0_0_150px_rgba(255,255,255,0.4)] before:animate-shadowMove before:pointer-events-none">
+              <MusicPlayer isAdmin={isAdmin} />
+            </div>            
             )}
           </motion.div>
         </div>

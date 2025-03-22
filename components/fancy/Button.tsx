@@ -9,6 +9,14 @@ const Switch = () => {
   const { messageControl, chatPaused } = useWebSocket();
   // console.log("from switch component", chatPaused);
 
+  // useEffect(() => {
+  //   if(chatPause){
+  //     toast("Chat Continued");
+  //   } else{
+  //     toast("Chat Paused Successfully");
+  //   }
+  // }, [chatPaused])
+
   return (
     <div className="relative aspect-[292/142] h-7">
       <input

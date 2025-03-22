@@ -5,6 +5,7 @@
 "use client"
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { fetchRoomDetails } from "../lib/fns/roomDetails";
+import { toast } from "sonner";
 
 interface WebSocketContextProps {
   messages: string[];
@@ -27,6 +28,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
     const [creatorId, setCreatorId] = useState(null);
     // const [userId, setUserId] = useState(null);
     const [userDets, setUserDets] = useState(null);
+    const [userCount, setUsersCount] = useState(0);
     const [chatPaused, setChatPaused] = useState(false);
     const [songAddStatus, setSongAddStatus] = useState(false);
     const [roomIdd, setRoomIdd] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
       // @ts-ignore
         try{
           const res = await fetchRoomDetails(roomId);
-          // console.log("res from /api/room:-", res);
+          // console.log("res from /api/room:-", res.user.user.email);
           setRoomData(res?.room.room);
           setIsAdmin(res?.room.isAdmin);
           // setUserId(res?.room.userId);
@@ -75,12 +77,12 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
         // console.log("we cam ehre to call", userId);
         // const ws = new WebSocket(process.env.WS_URL);
         // const ws = new WebSocket("ws://localhost:4000");
-        const ws = new WebSocket("wss://adcc-110-235-239-186.ngrok-free.app");
+        const ws = new WebSocket("wss://e916-110-235-239-186.ngrok-free.app");
 
         wsRef.current = ws;
 
         ws.onopen = () => {
-          console.log("Connected to WebSocket", ws);
+          // console.log("Connected to WebSocket", ws);
           setSocket(ws);
           ws.send(JSON.stringify({ type: "join", roomId: roomId, userId: userId }));
         };
@@ -91,8 +93,12 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
             // console.log("data rec for sending in ws: ", data);
             switch (data.type){
               case "message":
-                // console.log("message vala data", data);
-                setMessages((prev) => [...prev, data.text]);
+                // console.log("message vala dchatPausedata", data);
+                setMessages((prev) => [...prev, data]);
+                break;
+              case "userCount":
+                console.log("new user data", data);
+                setUsersCount(data.count);
                 break;
               case "songQueue":
                 setQueue(data.queue);
@@ -138,7 +144,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
 
     }, [roomId]);
 
-    const sendMessage = (text: any, sender: any) => {
+    const sendMessage = (text: any, sender: any = userDets.user.email) => {
       if (wsRef.current) {
         wsRef.current.send(JSON.stringify({ type: "message", text, sender }));
       }
@@ -226,8 +232,13 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
     }
 
     const allowSongAdd = () => {
-      console.log("called allowSongAdd")
+      // console.log("called allowSongAdd")
       if(!userId) return;
+      if(songAddStatus){
+        toast("Users are not allowed to Enter Songs");
+      } else {
+        toast("Users are allowed to Enter Songs");
+      }
       wsRef.current?.send(
         JSON.stringify({
           type: "allowSongAdd"
@@ -237,7 +248,7 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
     
       return (
         // @ts-ignore
-        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus, userDets, creatorId }}>
+        <WebSocketContext.Provider value={{ messages, sendMessage, queue, addSong, upvoteSong, userUpvotes, setUserUpvotes, userId, roomIdd, isAdmin, socket, nowPlaying, nextSong, prevSong, messageControl, chatPaused, allowSongAdd, songAddStatus, userDets, creatorId, userCount }}>
           {children}
         </WebSocketContext.Provider>
       );

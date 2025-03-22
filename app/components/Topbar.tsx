@@ -18,14 +18,14 @@ const TopBar = ({ userId }: TopBarProps) => {
     const { userDets } = useWebSocket();
 
     function copyToClipboard() {
-        const value = `http://localhost:3000/room/${userId}`;
+        const value = `http://crowdify-one.vercel.app/room/${userId}`;
         navigator.clipboard.writeText(value)
             .then(() => console.log("Copied to clipboard:", value))
             .catch(err => console.error("Failed to copy:", err));
     }
 
     return (
-        <div className="w-full h-fit pt-4 pb-3 flex sm:flex-row justify-between items-center px-4 sm:px-6 md:px-8 gap-3 sm:gap-0">
+        <div className="w-full h-fit pt-4 pb-3 flex sm:flex-row justify-between items-center px-4 sm:px-6 md:px-4 gap-3 sm:gap-0">
             {/* Navigation */}
             <div className="flex items-center font-funnel text-white text-lg sm:text-xl md:text-2xl">
                 <Link href="/" className="font-semibold">Home</Link>

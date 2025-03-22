@@ -7,13 +7,13 @@ const Switch = () => {
   // @ts-ignore
   const { allowSongAdd, songAddStatus } = useWebSocket();
   // console.log("from switch component", songAddStatus);
-  useEffect(() => {
-    if(songAddStatus){
-      toast("Users are allowed to Enter Songs");
-    } else {
-      toast("Users are not allowed to Enter Songs");
-    }
-  }, [allowSongAdd, songAddStatus])
+  // useEffect(() => {
+  //   if(songAddStatus){
+  //     toast("Users are allowed to Enter Songs");
+  //   } else {
+  //     toast("Users are not allowed to Enter Songs");
+  //   }
+  // }, [allowSongAdd, songAddStatus])
 
   return (
     <div className="relative aspect-[292/142] h-7">

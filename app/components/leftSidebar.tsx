@@ -47,7 +47,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
   roomId,
 }) => {
   // @ts-ignore
-  const { songAddStatus } = useWebSocket();
+  const { songAddStatus, userCount } = useWebSocket();
 
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,8 +72,6 @@ const LeftSidebar: FC<LeftSidebarProps> = ({
     setError("");
     addToQueue(e);
   };
-
-// Update the handleSearch function in your LeftSidebar component:
 
 const handleSearch = async () => {
   if (!searchQuery.trim()) return;
@@ -110,7 +108,6 @@ const handleSearch = async () => {
   };
 
   useEffect(() => {
-    // Close search results when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       if (searchResultsRef.current && !searchResultsRef.current.contains(event.target as Node)) {
         setShowSearchResults(false);
@@ -123,7 +120,6 @@ const handleSearch = async () => {
     };
   }, []);
 
-  // Handle Enter key press for search
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -151,6 +147,7 @@ const handleSearch = async () => {
         </div>
 
         <div className="flex flex-col gap-2">
+          <span className="text-sm text-gray-700 font-semibold font-funnel">Total Users: <span className="font-funnel text-base text-blue-600">{userCount}</span></span>
           {songAddStatus || isAdmin ? (
             <>
               <div className="flex flex-col md:flex-row gap-2">
@@ -170,7 +167,6 @@ const handleSearch = async () => {
                 </Button>
               </div>
               
-              {/* YouTube Search Section */}
               <div className="relative mt-2">
                 <div className="flex gap-2">
                   <Input
@@ -183,7 +179,7 @@ const handleSearch = async () => {
                   <Button 
                     onClick={handleSearch}
                     disabled={isSearching}
-                    className="w-full md:w-auto"
+                    className="w-fit md:w-auto"
                   >
                     {isSearching ? <><Search />...</> : <Search />}
                   </Button>
@@ -193,7 +189,7 @@ const handleSearch = async () => {
                 {showSearchResults && searchResults.length > 0 && (
                   <div 
                     ref={searchResultsRef}
-                    className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                    className="absolute z-[999] mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
                   >
                     {searchResults.map((result) => (
                       <div 
@@ -220,7 +216,7 @@ const handleSearch = async () => {
               {error && <p className="text-red-500 text-sm">{error}</p>}
               {videoId && (
                 <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden mt-2">
-                  <div className="w-full h-[30vh] md:h-[23vh]">
+                  <div className="w-full h-fit md:h-[23vh]">
                     <LiteYouTubeEmbed title="" id={videoId} />
                   </div>
                 </div>
