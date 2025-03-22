@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -17,7 +18,7 @@ type SearchResult = {
     }>;
   };
 
-export async function GET(req){
+export async function GET(req: { url: string | URL; }){
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q");
     console.log("query is q", q);
@@ -39,7 +40,7 @@ export async function GET(req){
 
           const response = await fetch(
             `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${encodeURIComponent(
-              q
+              q || ''
             )}&type=video&key=${apiKey}`
           );
 
