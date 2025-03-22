@@ -1,27 +1,52 @@
-//create a singleton inside - db.ts
-
-//should contain youtube or spotify link only using zod - in stream/route.ts
-
-todo: replace this with id everywhere // downvote/route.ts
 
 
-// currently hardcoded page in dashboard (resolve this)
-                creatorId: "e3432625-e842-4867-9cf6-be61868ec6ea",
+--> move to dasboard page UI then landing page then auto add songs from search
 
-                 docker run -p 5432:5432 -e POSTGRES_PASSWORD=randompassword postgresD\
+// add previous song play functionality in index.ts ws -- later now now 
+// launch it
+// responsiveness for landing page
+msg kisne konsa bhja \\ no. of users \\ 
+rebuild the UI with animations
 
-                 // store details in cookies so dont have to fetch from db again and again
-                 route.ts/next
-
-
-// add extention and dynamic island on website tabs make it the best...
-
-// Implement Websocket for real time update on voting and chat in dashboard. implement room functionality so other people can join room. get it done phuckerrrr
-// implement song search functionality for youtube
-// work on extention and Dynamic island
+- done
+direct add song from  search
+topbar only on landing page
 
 
-{/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>} */}
 
 
-// add animation while copying the roomId
+-- DEPLOYMENT CHANGES
+
+
+
+        // const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
+
+
+DATABASE_URL="postgresql://neondb_owner:npg_ErB2jdvW3xRL@ep-dark-morning-a5pzbtcg-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+
+// const PORT = process.env.WS_PORT || 4000;
+// const server = http.createServer();
+// const wss = new WebSocketServer({ server });
+
+// // Redis configuration for Railway
+// const redisClient = redis.createClient({
+//   url: process.env.REDIS_URL || "redis://default:sWrKlxRDRDgnAToHfBHWSlzlwzoZVYFa@tramway.proxy.rlwy.net:15775"
+// });
+
+
+two video player both playing. stop one laptop || song add by user gets paused when i allow with error || song undefined data when send
+
+
+
+
+landing page things
+
+   {/* section 3 */}
+    {/* <div className='w-screen h-fit z-30 bg-black'>
+        <StickyScrollRevealDemo />
+    </div> */}
+
+    {/* section 4 */}
+    {/* <div className='w-screen h-screen z-30 bg-black text-6xl font-funnel flex items-center justify-center text-white'>
+      Reviews
+    </div> */}

@@ -10,7 +10,7 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET ?? "secret",
   callbacks: {
     async signIn(params){
-          console.log(params);
+          // console.log("user auth details", params);
           if(!params.user.email){
             return false;
           }
@@ -18,6 +18,8 @@ const handler = NextAuth({
             await prismaClient.user.create({
               data: {
                 email: params.user.email,
+                name: params.user.name ?? "CN",
+                image: params.user.image ?? "",
                 provider: "Google"
               }
             })

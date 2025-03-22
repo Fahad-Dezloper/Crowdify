@@ -1,16 +1,30 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FastForward, Pause, Play, Rewind, SkipBack, SkipForward, Volume2, VolumeOff } from "lucide-react";
 import { useRef, useState } from "react";
 import ReactPlayer from "react-player"
+import { useWebSocket } from "../context/WebContext";
+import StreamButton from "./StreamButton";
 
-const MusicPlayer = ({video, onClick}) => {
-    const [isPlaying, setIsPlaying] = useState(true);
+interface MusicPlayerProps {
+  isAdmin: boolean;
+}
+
+const MusicPlayer = ({ isAdmin }: MusicPlayerProps) => {
+  // @ts-ignore
+  const {nowPlaying, nextSong, prevSong, userDets} = useWebSocket()
+  // console.log("now playing event happened", userDets);
+
+  const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [mute, setMute] = useState(false);
-  const playerRef = useRef<ReactPlayer>(null)
+  const playerRef = useRef<ReactPlayer>(null);
+
+  // console.log("new", video);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
@@ -21,6 +35,13 @@ const MusicPlayer = ({video, onClick}) => {
   const handleMute = () => {
     setMute(!mute);
   }
+
+  const handleSongEnd = () => {
+    setProgress(0); 
+    if(isAdmin){
+      nextSong();
+    }
+  };
 
   const handleProgress = (state: { played: number; playedSeconds: number }) => {
     setProgress(state.playedSeconds)
@@ -38,68 +59,81 @@ const MusicPlayer = ({video, onClick}) => {
 
     // console.log("here dets", video);
     return (
-        <div className="flex flex-col gap-4 w-full h-full">
-            <div className="flex flex-col justify-between h-full">
-            <div className="w-full h-[22vh] shadow-xl rounded-2xl overflow-hidden">
-                <ReactPlayer
-                    ref={playerRef}
-                    url={video.url}
-                    playing={isPlaying}
-                    width="100%"
-                    height="100%"
-                    muted={mute}
-                    onProgress={handleProgress}
-                    onDuration={handleDuration}
-                    config={{
-                    youtube: {
-                        playerVars: { showinfo: 0, controls: 0, modestbranding: 1 },
-                    },
-                    }}
-                />
-            </div>
 
-            <div className="space-y-1">
-                <h2 className="text-base font-semibold text-center leading-none font-roboto">{video.title}</h2>
-            </div>
-            </div>
-
-        <div className="flex flex-col gap-2">
-            
-            <div className="space-y-2">
-                <Slider
-                    value={[progress]}
-                    min={0}
-                    max={duration}
-                    step={1}
-                    onValueChange={handleSliderChange}
-                    // className="[&>span]:h-1 [&>span]:bg-orange-500"
-                />
-                <div className="flex justify-between text-sm text-gray-500">
-                    <span>{formatTime(progress)}</span>
-                    <span>{formatTime(duration)}</span>
-                </div>
-            </div>
-
-            <div className="flex items-center justify-center gap-4">
-            <Button onClick={handleMute} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
-                {mute ? <VolumeOff className="h-6 w-6" /> : <Volume2 className="h-6 w-6" /> }
-                {/* <Volume2 className="h-6 w-6" /> */}
+      <>
+      {nowPlaying ? (
+        <div className="flex flex-col gap-3 z-50 w-full sm:max-h-[40vh] md:max-h-[50vh] lg:h-[60vh]">
+        {/* Video Player */}
+        <div className="w-full sm:h-[25vh] md:h-[25vh] lg:h-[27vh] shadow-lg rounded-2xl overflow-hidden">
+          <ReactPlayer
+            ref={playerRef}
+            url={nowPlaying.url}
+            playing={isPlaying}
+            width="100%"
+            height="100%"
+            muted={mute}
+            onEnded={handleSongEnd}
+            onProgress={handleProgress}
+            onDuration={handleDuration}
+            config={{ youtube: { playerVars: { showinfo: 0, controls: 0, modestbranding: 1 } } }}
+          />
+        </div>
+      
+        {/* Song Title */}
+        <div className="text-center">
+          <h2 className="text-sm sm:text-base text-gray-200 font-semibold leading-none font-roboto">{nowPlaying.title}</h2>
+        </div>
+      
+        {/* Progress Bar */}
+        <div className="space-y-2 px-2 sm:px-4">
+          <Slider
+            value={[progress]}
+            min={0}
+            max={duration}
+            step={1}
+            className="bg-gray-600 text-blue-300 rounded-full"
+            onValueChange={handleSliderChange}
+          />
+          <div className="flex justify-between text-xs sm:text-sm text-gray-400">
+            <span>{formatTime(progress)}</span>
+            <span>{formatTime(duration)}</span>
+          </div>
+        </div>
+      
+        {/* Controls */}
+        <div className="flex items-center justify-center gap-3 sm:gap-4">
+          <Button onClick={handleMute} variant="ghost" size="icon" className="text-gray-300 hover:text-gray-400">
+            {mute ? <VolumeOff className="h-5 w-5 sm:h-6 sm:w-6" /> : <Volume2 className="h-5 w-5 sm:h-6 sm:w-6" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gray-800 hover:bg-gray-700 duration-200 text-white"
+            onClick={() => setIsPlaying(!isPlaying)}
+          >
+            {isPlaying ? <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-white" /> : <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white" />}
+          </Button>
+          {isAdmin && (
+            <Button onClick={nextSong} variant="ghost" size="icon" className="text-gray-300 hover:text-gray-400">
+              <SkipForward className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
-            <Button
-                variant="ghost"
-                size="icon"
-                className="h-12 w-12 rounded-full bg-black hover:bg-[#191919] duration-200 text-white"
-                onClick={() => setIsPlaying(!isPlaying)}
-            >
-                {isPlaying ? <Pause className="h-6 w-6 text-white" /> : <Play className="h-6 w-6 text-white" />}
-            </Button>
-            <Button onClick={onClick} variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
-                <SkipForward className="h-6 w-6" />
-            </Button>
-            </div>
-
+          )}
         </div>
       </div>
+      
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-12 w-full h-full">
+          <div className="relative w-full max-w-xs sm:max-w-sm">
+           <div className="w-full h-full  text-center">
+            <span className="text-3xl text-center  sm:text-6xl lg:text-[5rem] font-funnel animate-neon text-white pb-2 leading-none lg:leading-none tracking-wider whitespace-nowrap">
+              {userDets ? userDets.user.name.split(" ")[0] : ""}
+            </span>
+            </div>
+          </div>
+         {isAdmin && <StreamButton onClick={nextSong} item="Start Streaming Now" />}
+        </div>
+      )}
+    </> 
     )
 }
 

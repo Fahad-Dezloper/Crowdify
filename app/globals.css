@@ -24,6 +24,8 @@ body {
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --slider-track-color: #ffffff; 
+    --slider-thumb-color: #ffffff;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
@@ -42,6 +44,8 @@ body {
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
+    --slider-track-color: #ffffff; 
+      --slider-thumb-color: #ffffff;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
@@ -90,3 +94,71 @@ body::-webkit-scrollbar {
   display: none;
 }
 /* #101216 */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  50% { transform: translateY(-20px) rotate(5deg) scale(1.1); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  50% { transform: translateY(-10px) rotate(-5deg) scale(0.95); }
+}
+
+@keyframes pulse-slow {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { 
+    text-shadow: 
+      0 0 5px rgba(255,255,255,.5),
+      0 0 8px rgba(255,255,255,.5),
+      0 0 15px rgba(255,255,255,.5),
+      0 0 25px rgba(88,120,255,.5),
+      0 0 45px rgba(88,120,255,.5),
+      0 0 55px rgba(88,120,255,.5),
+      0 0 65px rgba(88,120,255,.5),
+      0 0 85px rgba(88,120,255,.5);
+  }
+  50% { 
+    text-shadow: 
+      0 0 3px rgba(255,255,255,.5),
+      0 0 5px rgba(255,255,255,.5),
+      0 0 10px rgba(255,255,255,.5),
+      0 0 15px rgba(88,120,255,.5),
+      0 0 25px rgba(88,120,255,.5),
+      0 0 35px rgba(88,120,255,.5),
+      0 0 45px rgba(88,120,255,.5),
+      0 0 55px rgba(88,120,255,.5);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.animate-gradient {
+  animation: gradient-shift 15s ease infinite;
+  background-size: 400% 400%;
+}
+
+.animate-neon {
+  animation: neon-pulse 2s ease-in-out infinite;
+}

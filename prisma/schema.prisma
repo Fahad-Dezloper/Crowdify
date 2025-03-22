@@ -8,45 +8,81 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  email    String   @unique
-  provider Provider
-  streams  Stream[]
-  upvotes  Upvote[]
+  id        String     @id @default(uuid())
+  email     String     @unique
+  name      String
+  image     String
+  provider  Provider
+  rooms     RoomUser[]
+  messages  Message[]
+  createdAt DateTime   @default(now())
+  Room      Room[]
+  Stream    Stream[]
+  Upvote    Upvote[]
+}
+
+model Room {
+  id           String     @id @default(uuid())
+  code         String     @unique
+  name         String
+  adminId      String
+  admin        User       @relation(fields: [adminId], references: [id])
+  users        RoomUser[]
+  streams      Stream[]
+  messages     Message[]
+  allowSongAdd Boolean    @default(true) // Admin can control this
+  createdAt    DateTime   @default(now())
+}
+
+model RoomUser {
+  id     String @id @default(uuid())
+  userId String
+  roomId String
+  role   Role   @default(USER)
+  user   User   @relation(fields: [userId], references: [id])
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
 }
 
 model Stream {
-  id            String         @id @default(uuid())
-  type          StreamType
-  active        Boolean        @default(true)
-  played        Boolean        @default(false)
-  playedTs      DateTime       @default(now())
-  createdAt     DateTime      @default(now())
-  userId        String  
-  extractedId   String
-  url           String
-  bigImg        String         @default("")
-  smallImg      String         @default("")
-  title         String         @default("")
-  currentStream CurrentStream?
-  user          User           @relation(fields: [userId], references: [id])
-  upvotes       Upvote[]
-}
-
-model CurrentStream {
-  userId   String  @id
-  streamId String? @unique
-  stream   Stream? @relation(fields: [streamId], references: [id])
+  id          String     @id @default(uuid())
+  type        StreamType
+  active      Boolean    @default(true)
+  played      Boolean    @default(false)
+  playedTs    DateTime   @default(now())
+  createdAt   DateTime   @default(now())
+  roomId      String
+  extractedId String
+  url         String
+  bigImg      String     @default("")
+  smallImg    String     @default("")
+  title       String     @default("")
+  room        Room       @relation(fields: [roomId], references: [id])
+  upvotes     Upvote[]
+  addedById   String?
+  addedBy     User?      @relation(fields: [addedById], references: [id])
 }
 
 model Upvote {
-  id       String @id @default(uuid())
+  id       String   @id @default(uuid())
   userId   String
   streamId String
-  stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
-  user     User   @relation(fields: [userId], references: [id])
+  vote     VoteType
+  stream   Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, streamId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  userId    String
+  roomId    String
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
 }
 
 enum StreamType {
@@ -56,4 +92,14 @@ enum StreamType {
 
 enum Provider {
   Google
+}
+
+enum VoteType {
+  Upvote
+  Downvote
+}
+
+enum Role {
+  USER
+  ADMIN
 }

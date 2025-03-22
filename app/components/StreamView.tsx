@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { Button } from "@/components/ui/button"
@@ -9,188 +11,163 @@ import { useEffect, useRef, useState } from "react"
 import {z} from 'zod'
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
 import { YT_REGEX } from "@/lib/utils";
-import Image from "next/image";
 import MusicPlayer from "./MusicPlayer";
 import Queue from "./Queue";
 import LeftSidebar from "./leftSidebar";
 import TopBar from "./Topbar";
 import ChatBot from "./ChatBot";
+import { useWebSocket } from "../context/WebContext";
+import {motion} from 'framer-motion';
+import { toast } from "sonner"
 
-const REFRESH_INTERVAL_MS = 10 * 1000;
-
-interface Video {
-    "id": string,
-    "type": string,
-    "url": string,
-    "extractedId": string,
-    "title": string,
-    "smallImg": string,
-    "bigImg": string,
-    "active": boolean,
-    "userId": string,
-    "upvotes": number,
-    "haveUpvoted": boolean
+interface StreamViewProps {
+    roomId: string;
 }
-const StreamView = ({creatorId, playVideo = false}: {creatorId: string; playVideo:boolean}) => {
-    const [arr, setArr] = useState([])
-    const [liked, setLiked] = useState(false);
-    // const musicRef = useRef(null);
+const StreamView = ({roomId}: StreamViewProps) => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     const [inputLink, setInputLink] = useState("");
-    const [currentVideo, setCurrentVideo] = useState();
-    const [playNextLoader, setPlayNextLoader] = useState(false);
+    // @ts-ignore
+    const {socket, creatorId, isAdmin, addSong} = useWebSocket();
 
-    // console.log("i am arr", arr);
-    async function refreshStreams(){
-        const res = await fetch(`/api/streams/?creatorId=${creatorId}`, {credentials: "include"});
-        const json = await res.json();
-        setArr(json.streams.sort((a, b) => a.upvotes < b.upvotes ? 1 : -1));
-        setCurrentVideo(video => {
-            if(video?.id === json.activeStream?.stream?.id){
-                return video;
-            }
-            return json.activeStream.stream
+    const addToQueue = async (e: React.FormEvent) => {
+        e.preventDefault(); 
+        if (!creatorId || !inputLink || !roomId) {
+            console.error("Missing required fields");
+            return;
+        }
+    
+        const bodyData = JSON.stringify({
+            creatorId,
+            url: inputLink,
+            roomId
         });
-
-        // console.log("here response", res.data.streams);
-    }
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-        refreshStreams();
-        const interval = setInterval(() => {
-            refreshStreams();
-        }, REFRESH_INTERVAL_MS)
-    },[])   
-
-    function handleVote(streamId: string, isUpvote: boolean){
-
-        try{
-            fetch(`/api/streams/${isUpvote ? "upvote" : "downvote"}`, {
+    
+        try {
+            const res = await fetch("/api/streams", {
                 method: "POST",
-                body: JSON.stringify({
-                    streamId
-                })
-            })
-            setLiked(true)
-        } catch (e){
-            console.log("from fe", e)
-        }
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        alert("clicked")
-        const res = await fetch("/api/streams/", {
-            method: "POST",
-            body: JSON.stringify({
-                creatorId: creatorId,
-                url: inputLink
-            })
-        });
-        // setArr([...prev, await res.json()])
-        setInputLink('');
-    }
-
-    const PlayNext = async () => {
-        if(arr.length > 0){
-            try {
-                setPlayNextLoader(true);
-                const data = await fetch('/api/streams/next', {
-                    method: "GET",
-                })
-                const json = await data.json();
-                setCurrentVideo(json.stream);
-            } catch (error) {
-                console.log(error);
-            } finally{
-                setPlayNextLoader(false)
+                headers: {
+                    "Content-Type": "application/json",
+                    "Content-Length": bodyData.length.toString()
+                },
+                body: bodyData
+            });
+    
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error("Error from API:", errorData);
+                return;
             }
+    
+            const data = await res.json();
+    
+            if (socket) {
+                const response = await addSong({
+                    url: inputLink,
+                    title: data.title,
+                    thumbnail: data.bigImg,
+                    streamId: data.id
+                });
+
+            toast("Song Added Successfully");
+            } else {
+                console.error("Error: socket is not available");
+                toast("Websocket Connection not initialized")
+            }
+    
+            setInputLink('');
+    
+        } catch (error) {
+            console.error("Network or API error:", error);
+            toast("Error Adding Successfully")
         }
-    }
+    };
 
     return (
-        <div className="w-screen h-screen flex bg-[#101216] justify-between items-center">
+        <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="w-screen md:h-screen h-fit flex flex-col md:flex-row bg-[#101216] overflow-y-auto"
+    >
+      {/* Left Sidebar (For Large Screens) */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="hidden md:flex h-full"
+      >
+        <LeftSidebar 
+                isAdmin={isAdmin} 
+                roomId={roomId} 
+                addToQueue={addToQueue}
+                inputLink={inputLink} 
+                YT_REGEX={YT_REGEX} 
+                setInputLink={setInputLink} 
+            />
+      </motion.div>
 
-            <LeftSidebar handleSubmit={handleSubmit} inputLink={inputLink} YT_REGEX={YT_REGEX} setInputLink={setInputLink} />
+      <div className="w-full h-full flex py-1 flex-col overflow-hidden">
+        <TopBar userId={creatorId} />
 
-            <div className="w-full h-full flex overflow-hidden flex-col">
-                <TopBar userId={creatorId} />
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="md:hidden"
+        >
+          <LeftSidebar 
+                isAdmin={isAdmin} 
+                roomId={roomId} 
+                addToQueue={addToQueue}
+                inputLink={inputLink} 
+                YT_REGEX={YT_REGEX} 
+                setInputLink={setInputLink} 
+            />
+        </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex md:hidden my-4 p-2 rounded-2xl mx-2"
+        >
+          {isMobile && <MusicPlayer isAdmin={isAdmin} />}
+        </motion.div>
 
-                <div className="w-full h-fit flex items-center scrolll justify-center px-6 pt-1 pb-2">
-                    <Queue queue={arr} handleVote={handleVote} liked={liked}/>
-                </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="w-full md:h-[68vh] h-fit flex items-center justify-center px-2 md:px-4 pt-1 pb-2 overflow-x-auto"
+        >
+          <Queue />
+        </motion.div>
 
+        <div className="flex flex-col md:flex-row w-full h-full overflow-hidden px-2 md:px-4 py-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="w-full"
+          >
+            <ChatBot isAdmin={isAdmin} />
+          </motion.div>
 
-
-
-                <div className="flex w-full h-full overflow-hidden px-6 py-5 gap-4">            
-                    <ChatBot />
-
-                    <div className="w-[40vw] h-full">
-                        <div className="w-full h-full bg-[#e6e6e6] rounded-2xl p-5 px-8" >
-                            {currentVideo ? (
-                                <MusicPlayer video={currentVideo} onClick={PlayNext} />
-                                        ) : 
-                                        (
-                                        <div className="w-full h-full bg-gray-400 flex flex-col rounded-2xl">
-                                            <div className="w-full h-full bg-blue-400">
-                                            </div>
-                                            <div className="w-full h-full bg-yellow-400">
-                                                    <Button onClick={PlayNext}>Play Next</Button>
-                                            </div>
-                                        </div>
-                                    )}
-                            </div>
-                        </div>
-                    </div>
-            </div>
-
-        {/* currnet video and preview*/}
-            {/* 
-            <div className="">
-                <h1 className="text-white font-semibold text-2xl text-center">Now Playing</h1>
-                {currentVideo ? (
-                <div>
-                    {playVideo ? <>
-                        <iframe width={"100%"} height={300} src={`https://www.youtube.com/embed/${currentVideo.extractedId}?autoplay=1`} allow="autoplay"></iframe>
-                    </> : <>
-                    <img 
-                        src={currentVideo.bigImg} 
-                        className="w-full h-72 object-cover rounded"
-                    />
-                    <p className="mt-2 text-center font-semibold text-white">{currentVideo.title}</p>
-                </>}
-            </div>) : (
-                <p className="text-center py-8 text-gray-400">No video playing</p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="w-full md:flex hidden md:w-[40vw] h-full"
+          >
+            {!isMobile && (
+              <div className="w-full h-full rounded-2xl z-30 py-5 px-6 relative overflow-hidden shadow-lg before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-2xl before:border-transparent before:shadow-[inset_0_0_150px_rgba(255,255,255,0.4)] before:animate-shadowMove before:pointer-events-none">
+              <MusicPlayer isAdmin={isAdmin} />
+            </div>            
             )}
-            </div> */}
-
-    {/* {playVideo && <Button disabled={playNextLoader} onClick={PlayNext}><Play /> {playNextLoader ? "Loading..." : "Play Next"}</Button>}       */}
-    
-     
-{/* Queue Box */}
-            {/* <div className="px-6 py-4 w-[30vw] h-full border-r-2 backdrop-blur-sm overflow-y-auto flex flex-col">
-                <h1 className="font-funnel text-3xl text-white mb-7">Upcoming</h1>
-                {arr.map((item: Video, index) => (
-                    <div key={index} className="flex gap-4 hover:bg-gray-500 p-2 items-center justify-between text-white">
-                        <div className="flex items-center gap-2">
-                            <div className="max-w-[8vw] max-h-[10vh] rounded-xl overflow-hidden">
-                            <img src={item.bigImg} alt="Preview Image" className="w-full h-full object-cover" />
-                            </div>
-                            <h1 className="text-[0.65rem] font-semibold leading-none">{item.title}</h1>
-                        </div>
-
-                        <div className="flex bg-black rounded-2xl py-2 px-3 text-sm items-center">
-                            <button onClick={() => handleVote(item.id, item.haveUpvoted ? false : true)} className="flex gap-4 items-center text-white">
-                            {item.haveUpvoted ? <div className="flex gap-6"><ChevronDown size={18} /></div> : <div className="flex gap-6"><ChevronUp  size={18} className={`${liked && "text-blue-800"}`} /></div>}{item.upvotes} 
-                            </button>
-                            <Link href={item.url}><Link2 size={18} /></Link>
-                        </div>
-
-                    </div>
-                ))}
-            </div> */}
+          </motion.div>
         </div>
+      </div>
+    </motion.div>
     )
 }
 

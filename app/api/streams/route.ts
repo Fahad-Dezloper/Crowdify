@@ -1,111 +1,61 @@
-import { prismaClient } from "@/app/lib/db";
+import { search } from "youtube-search-without-api-key";
 import { NextRequest, NextResponse } from "next/server";
-import {z} from 'zod'
-// @ts-ignore
-import youtubesearchapi from 'youtube-search-api'
-import { YT_REGEX } from "@/lib/utils";
-import { getServerSession } from "next-auth";
 
-const CreateStreamSchema = z.object({
-    creatorId: z.string(),
-    url: z.string() //should contain youtube or spotify link only
-})
 
-export async function POST(req: NextRequest){
-    try { 
-        const data = CreateStreamSchema.parse(await req.json());
-        const isYt = data.url.match(YT_REGEX);
-        if(!isYt){
-            return NextResponse.json({
-                message: "Wrong URL format"
-            }, {
-                status: 411
-            })    
-        }
-        const extractedId = data.url.split("?v=")[1];
-
-        const res = await youtubesearchapi.GetVideoDetails(extractedId)
-        console.log(res);
-        const thumbnails = res.thumbnail.thumbnails;
-        console.log("data thumb", thumbnails);
-        thumbnails.sort((a: {width: number}, b: {width: number}) => a.width < b.width ? -1 : 1)
-       const stream = await prismaClient.stream.create({
-            data: {
-                userId: data.creatorId,
-                url: data.url, 
-                extractedId,
-                type: "Youtube",
-                title: res.title ?? "Can't find your song",
-                smallImg: (thumbnails.length > 1 ? thumbnails[thumbnails.length - 2 ].url: thumbnails[thumbnails.length - 1].url) ?? "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png",
-                bigImg: thumbnails[thumbnails.length - 1].url ?? "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png"
-            }
-        });
-        return NextResponse.json({
-            message: "Added Stream",
-            id: stream.id
-        })
-
-    } catch (e) {
-        console.log(e);
-        return NextResponse.json({
-            message: "Error while adding a stream"
-        }, {
-            status: 411
-        })
-    }
+function extractVideoId(url: string | null) {
+    const match = url ? url.match(/(?:\?v=|&v=|youtu\.be\/|embed\/|\/v\/|\/e\/|watch\?v=|watch\?.+&v=)([^&]+)/) : null;
+    return match ? match[1] : null;
 }
 
-export async function GET(req: NextRequest){
-    const creatorId = req.nextUrl.searchParams.get("creatorId");
-    const session = await getServerSession();
 
-    const user = await prismaClient.user.findFirst({
-        where: {
-            email: session?.user?.email ?? ""
+export async function POST(req: NextRequest) {
+    const det = await req.json();
+    // console.log("Received data:", det);
+
+    try {
+        if(!det.url){
+            return console.error("url not there");
         }
-    })
 
-    if(!creatorId){
+        const extractedId = extractVideoId(det.url);
+        const query = extractedId;
+
+        // console.log("Searching YouTube for:", query);
+
+        // Fetch search results
+        if (!query) {
+            throw new Error("Invalid query: Video ID could not be extracted.");
+        }
+        const results = await search(query);
+
+        if (!results || results.length === 0) {
+            throw new Error("No results found for the given query.");
+        }
+
+        // Get the first video result
+        const video = results[0];
+        const videoTitle = video.title;
+        const bigImg = video.snippet.thumbnails?.high?.url || 
+            "https://www.insticc.org/node/TechnicalProgram/56e7352809eb881d8c5546a9bbf8406e.png";
+
+        // console.log("Fetched video title:", videoTitle);
+        // console.log("Fetched thumbnail:", bigImg);
+
         return NextResponse.json({
-            message: "Error"
-        }, {
-            status: 411
-        })
-    }
-    
-    const [streams, activeStream] = await Promise.all([await prismaClient.stream.findMany({
-        where: {
-            userId: creatorId ?? "",
-            played: false
-        }, 
-        include: {
-            _count: {
-                select: {
-                    upvotes: true
-                }
-            },
-            upvotes: {
-                where: {
-                    userId: user?.id
-                }
-            }
-        }
-    }), prismaClient.currentStream.findFirst({
-        where: {
-            userId: creatorId
-        },
-        include: {
-            stream: true
-        }
-    })])
+            message: "Added Stream",
+            id: crypto.randomUUID(),
+            title: videoTitle,
+            bigImg: bigImg
+        });
 
-    // console.log("here streams", streams);
-    return NextResponse.json({
-        streams: streams.map(({_count, ...rest}) => ({
-            ...rest,
-            upvotes: _count.upvotes,
-            haveUpvoted: rest.upvotes.length ? true : false
-        })),
-        activeStream
-    })
+    } catch (e) {
+        console.error("Error occurred:", e);
+        return NextResponse.json(
+            {
+                message: "Error while fetching video details",
+                error: e,
+            },
+            { status: 500 }
+        );
+    }
 }

@@ -9,9 +9,9 @@ const Redirect = () => {
 
     useEffect(() => {
         if(session?.data?.user){
-            router.push("/dashboard")
+            router.push("/room")
         }
-    }, [session]);
+    }, [router, session]);
 
   return null;
 }
