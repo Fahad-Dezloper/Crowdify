@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
@@ -12,7 +13,12 @@ interface ChatBotProps {
 
 const ChatBot = ({ isAdmin }: ChatBotProps) => {
   // @ts-ignore
-  const { messages, sendMessage, messageControl, chatPaused } = useWebSocket();
+  const { messages, sendMessage, messageControl, chatPaused } = useWebSocket() as {
+    messages: { sender: string; text: string }[];
+    sendMessage: (message: string) => void;
+    messageControl: any;
+    chatPaused: boolean;
+  };
   const [input, setInput] = useState("");
   // console.log("chat paused fn", messages);
     const handleSend = () => {
