@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useWebSocket } from "@/app/context/WebContext";
-import React, { useEffect } from "react";
-import { toast } from "sonner";
+import React from "react";
 
 const Switch = () => {
   // @ts-ignore
