@@ -14,9 +14,9 @@ const LandingPage = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [playingIndex, setPlayingIndex] = useState<number | null>(null);
     const [windowSize, setWindowSize] = useState({
-      width: typeof window !== 'undefined' ? window.innerWidth : 0,
-      height: typeof window !== 'undefined' ? window.innerHeight : 0,
-  });
+      width: 0,
+      height: 0,
+    });
     const elements = [
         {
           top: "top-20",
@@ -91,21 +91,33 @@ const LandingPage = () => {
         whileHover: { opacity: 1 },
       };
 
-      useEffect(() => {
-        const handleResize = () => {
-            setWindowSize({
-                width: window.innerWidth,
-                height: window.innerHeight,
-            });
-        };
+      // Function to determine size based on windowSize
+      const getAudioLinesSize = () => {
+        if (windowSize.width < 768) return 50;
+        if (windowSize.width < 1024) return 90;
+        return 125;
+      };
 
-        window.addEventListener('resize', handleResize);
-        
-        // Initial check on mount
-        handleResize();
-        
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+      useEffect(() => {
+        // Only run on client-side
+        if (typeof window !== 'undefined') {
+          const handleResize = () => {
+              setWindowSize({
+                  width: window.innerWidth,
+                  height: window.innerHeight,
+              });
+          };
+
+          // Set initial size
+          handleResize();
+          
+          // Add event listener
+          window.addEventListener('resize', handleResize);
+          
+          // Clean up event listener
+          return () => window.removeEventListener('resize', handleResize);
+        }
+      }, []);
 
 
   return (
@@ -123,8 +135,7 @@ const LandingPage = () => {
         animate={{ scale: 1 }} 
         className="p-3 border-2 mx-2 rounded-full mt-4 md:mt-6 sm:block"
       >
-      {/* @ts-ignore */}
-        <AudioLines size={window.innerWidth < 768 ? 50 : window.innerWidth < 1024 ? 90 : 125} className="text-white" />
+        <AudioLines size={getAudioLinesSize()} className="text-white" />
       </motion.span>
 
       <span>wdify</span>
@@ -232,9 +243,8 @@ const LandingPage = () => {
                 transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
                 className="p-2 md:p-3 border-2 mx-1 md:mx-2 rounded-full mt-6 md:mt-10 lg:mt-16"
             >
-              {/* @ts-ignore */}
                 <AudioLines 
-                    size={window.innerWidth < 768 ? 60 : window.innerWidth < 1024 ? 90 : 125} 
+                    size={getAudioLinesSize()} 
                     className="text-white"
                 />
             </motion.span>
