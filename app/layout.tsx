@@ -4,6 +4,8 @@ import "./globals.css";
 import { Provider } from "./Provider";
 import { Toaster } from "@/components/ui/sonner"
 import FeedbackComponent from "./components/feedback";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const funnelDisplay = Funnel_Display({
   subsets: ["latin"],
@@ -35,6 +37,8 @@ export default function RootLayout({
         className={`${funnelDisplay.variable} ${roboto.variable} antialiased relative`}
       >
         <Provider>
+        <Analytics/>
+        <SpeedInsights/>
           <Toaster />
           <FeedbackComponent />
         {children}

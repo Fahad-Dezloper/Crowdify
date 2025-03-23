@@ -113,12 +113,22 @@ const LandingPage = () => {
     {/* <Navbar /> */}
     <Navbar />
     <div className='flex flex-col w-screen h-screen fixed top-0 z-10 items-center justify-center'>
-    <div className="w-fit h-fit font-funnel flex items-center justify-center leading-none text-[9vw] text-white">
+    <div className="w-fit h-fit font-funnel flex items-center justify-center leading-none text-[12vw] sm:text-[9vw] lg:text-[7vw] text-white">
       <span>Cr</span> 
-      <motion.span initial={{scale:0}} animate={{scale: 1}} className="p-3 border-2 mx-2 rounded-full mt-6"><AudioLines size={65} className="text-white" /></motion.span>
+      
+      {/* Hide Audio Icon on Small Screens */}
+      <motion.span 
+        initial={{ scale: 0 }} 
+        animate={{ scale: 1 }} 
+        className="p-3 border-2 mx-2 rounded-full mt-4 md:mt-6 sm:block"
+      >
+        <AudioLines size={window.innerWidth < 768 ? 50 : window.innerWidth < 1024 ? 90 : 125} className="text-white" />
+      </motion.span>
+
       <span>wdify</span>
-      </div>
-      <div>
+    </div>
+
+    <div>
       {elements.map(({ top, left, right, bgColor, image, alt, song }, index) => (
         <motion.div
           key={index}
@@ -126,41 +136,47 @@ const LandingPage = () => {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.1 }}
-          className={`absolute ${top} ${left || right} overflow-hidden border-2 cursor-grab ${bgColor} rounded-md`}
+          className={`absolute ${top} ${left || right} overflow-hidden border-2 cursor-grab ${bgColor} rounded-md hidden sm:block`}
         >
-            <img
-              src={image}
-              className="w-full h-full object-cover pointer-events-none"
-              alt={alt}
-            />
+          <img
+            src={image}
+            className="w-full h-full object-cover pointer-events-none"
+            alt={alt}
+          />
 
-<motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 0 }}
-      whileHover={{ opacity: 0.7 }}
-      transition={{ duration: 0.3 }}
-      className="absolute inset-0 w-full h-full"
-      style={{
-        background: "linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.3))",
-      }}
-    >
-        <button className='flex items-center justify-center w-full h-full' onClick={() => togglePlay(index, song)}>
-                {playingIndex === index ? (
-                  <PauseCircle size={50} className="text-white" />
-                ) : (
-                  <PlayCircle size={50} className="text-white" />
-                )}
-              </button>
-    </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0 }}
+            whileHover={{ opacity: 0.7 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 w-full h-full"
+            style={{
+              background: "linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.3))",
+            }}
+          >
+            <button 
+              className='flex items-center justify-center w-full h-full' 
+              onClick={() => togglePlay(index, song)}
+            >
+              {playingIndex === index ? (
+                <PauseCircle size={50} className="text-white" />
+              ) : (
+                <PlayCircle size={50} className="text-white" />
+              )}
+            </button>
+          </motion.div>
 
           {song && (
             <audio ref={(el) => { audioRefs.current[index] = el; }} src={song} />
           )}
 
           {playingIndex === index && (
-            <div className="absolute bottom-0 py-3 left-1/2 transform w-full  justify-center -translate-x-1/2 rotate-180 flex space-x-1" style={{
+            <div 
+              className="absolute bottom-0 py-3 left-1/2 transform w-full justify-center -translate-x-1/2 rotate-180 flex space-x-1" 
+              style={{
                 background: "linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.3))",
-              }}>
+              }}
+            >
               {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
@@ -171,97 +187,91 @@ const LandingPage = () => {
                     delay: i * 0.8,
                     ease: "easeInOut",
                   }}
-                  className="w-1 bg-white "
+                  className="w-1 bg-white"
                 />
               ))}
             </div>
           )}
-
         </motion.div>
       ))}
     </div>
-    </div>
+</div>
+
 
   {/* Content section */}
   <motion.div 
-                initial={{ y: 100, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8 }}
-                viewport={{ once: true, amount: 0.3 }}
-                className='h-fit flex justify-center rounded-t-[2rem] md:rounded-t-[3rem] lg:rounded-t-[4rem] pt-8 md:pt-12 w-screen z-20 mt-[95%] md:mt-[100%] bg-black text-white'
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, ease: "easeOut" }}
+    viewport={{ once: true, amount: 0.3 }}
+    className='h-fit flex justify-center rounded-t-[2rem] md:rounded-t-[3rem] lg:rounded-t-[4rem] pt-8 md:pt-12 w-screen z-20 mt-[180%] md:mt-[100%] bg-black text-white'
+>
+    <div className="flex flex-col items-center leading-none px-4">
+        <motion.h3 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            className="text-[8vw] font-semibold font-roboto text-[#bbbbbb] tracking-tight"
+        >
+            Let Your
+        </motion.h3>
+        
+        <div className="w-fit h-fit font-funnel flex items-center justify-center leading-none text-[14vw] md:text-[16vw] lg:text-[18vw] text-white">
+            <motion.span
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
             >
-                <div className="flex flex-col items-center leading-none px-4">
-                    <motion.h3 
-                        initial={{ x: -100, opacity: 0 }}
-                        whileInView={{ x: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-[8vw] font-semibold font-roboto text-[#333333] tracking-tight"
-                    >
-                        Let Your
-                    </motion.h3>
-                    
-                    <div className="w-fit h-fit font-funnel flex items-center justify-center leading-none text-[16vw] md:text-[18vw] lg:text-[20vw] text-white">
-                        <motion.span
-                            initial={{ x: -200, opacity: 0 }}
-                            whileInView={{ x: 0, opacity: 1 }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
-                        >
-                            Cr
-                        </motion.span> 
-                        <motion.span 
-                            initial={{ scale: 0, rotate: 0 }}
-                            whileInView={{ 
-                                scale: [0, 1.2, 1],
-                                rotate: [0, 15, -15, 0]
-                            }}
-                            transition={{ 
-                                duration: 1.5, 
-                                delay: 0.8,
-                                times: [0, 0.6, 0.8, 1] 
-                            }}
-                            className="p-2 md:p-3 border-2 mx-1 md:mx-2 rounded-full mt-6 md:mt-10 lg:mt-16"
-                        >
-                            <AudioLines 
-                                size={windowSize.width < 768 ? 60 : windowSize.width < 1024 ? 90 : 125} 
-                                className="text-white"
-                            />
-                        </motion.span>
-                        <motion.span
-                            initial={{ x: 200, opacity: 0 }}
-                            whileInView={{ x: 0, opacity: 1 }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
-                        >
-                            wd
-                        </motion.span>
-                    </div>
-                    
-                    <motion.h3 
-                        initial={{ y: 100, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 1 }}
-                        viewport={{ once: true }}
-                        className='text-[5vw] md:text-[6vw] font-semibold font-roboto text-[#333333] mt-2 md:mt-4'
-                    >
-                        Decide What you <span className='font-funnel'>Hear</span>
-                    </motion.h3>
-                    
-                    <motion.div
-                        initial={{ y: 50, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 1.2 }}
-                        viewport={{ once: true }}
-                        className="mt-8 md:mt-12 mb-8"
-                    >
-                        <motion.button
-                            whileHover={{ scale: 1.05, backgroundColor: "#3a3a3a" }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-6 py-3 md:px-8 md:py-4 bg-[#222222] text-white rounded-full font-funnel text-lg md:text-xl"
-                        >
-                            Start Listening
-                        </motion.button>
-                    </motion.div>
-                </div>
-            </motion.div>
+                Cr
+            </motion.span> 
+            <motion.span 
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: [0, 1.1, 1], opacity: 1 }}
+                transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
+                className="p-2 md:p-3 border-2 mx-1 md:mx-2 rounded-full mt-6 md:mt-10 lg:mt-16"
+            >
+                <AudioLines 
+                    size={window.innerWidth < 768 ? 60 : window.innerWidth < 1024 ? 90 : 125} 
+                    className="text-white"
+                />
+            </motion.span>
+            <motion.span
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            >
+                wd
+            </motion.span>
+        </div>
+        
+        <motion.h3 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+            className='text-[5vw] md:text-[6vw] font-semibold font-roboto text-[#bbbbbb] mt-2 md:mt-4'
+        >
+            Decide What You <span className='font-funnel'>Hear</span>
+        </motion.h3>
+        
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
+            viewport={{ once: true }}
+            className="mt-8 md:mt-12 mb-8"
+        >
+            <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="px-6 py-3 md:px-8 md:py-4 bg-[#222222] text-white rounded-full font-funnel text-lg md:text-xl"
+            >
+                Start Listening
+            </motion.button>
+        </motion.div>
+    </div>
+</motion.div>
+
 
     {/* section 5 */}
     <motion.div 
@@ -277,7 +287,7 @@ const LandingPage = () => {
                         © 2025 India. All rights reserved.
                     </h1>
                     <Link
-                        href="https://x.com/l_fahadkhan_l"
+                        href="https://x.com/dezloperr"
                         className="flex gap-1 font-funnel font-semibold hover:underline mt-4 md:mt-0 text-sm md:text-base"
                     >
                         <motion.span
