@@ -57,12 +57,12 @@ const Queue = () => {
                         </div>
             </div>
 
-            <div className="flex overflow-auto items-end w-full gap-3 scrolll h-full">
+            <div className="flex overflow-x-auto items-end w-full gap-3 scrolll h-full">
             {queue.length > 0 ? (
         queue.map((item: { thumbnail: string | undefined;hasLiked: boolean; title: any; upvoteCount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; streamId: unknown; }, index: Key | null | undefined) => (
           <div
             key={index}
-            className="flex flex-col min-w-[33vw] max-w-[35vw] md:min-w-0 md:w-[13vw] gap-4 border h-full rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
+            className="flex flex-col min-w-[33vw] max-w-[36vw] overflow-hidden shrink-0 md:min-w-0 md:w-[13vw] gap-4 border h-full rounded-2xl text-black hover:bg-gray-50 p-2 items-center justify-between"
           >
             <div className="flex flex-col items-center gap-2 h-full">
               <div className="min-w-[12vw] min-h-[12vh] rounded-xl overflow-hidden">
