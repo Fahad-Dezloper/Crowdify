@@ -294,7 +294,7 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="w-full h-fit py-6 md:py-9 px-4 bg-black z-30"
             >
-                <div className="w-full h-full flex flex-col md:flex-row justify-between items-center px-6 md:px-16 py-6 md:py-8 bg-[#b3b3b3] rounded-2xl text-center md:text-left">
+                <div className="w-full h-full flex flex-col md:flex-row justify-between items-center px-6 md:px-16 py-6 md:py-8 bg-[#b3b3b3] rounded-2xl text-center md:text-left dark:bg-slate-800">
                     <h1 className="font-semibold font-funnel text-sm md:text-base">
                         crowdify@gmail.com <br />
                         © 2025 India. All rights reserved.

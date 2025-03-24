@@ -1,7 +1,7 @@
 "use client";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 export default function Navbar() {
   const session = useSession();
 
@@ -13,12 +13,14 @@ export default function Navbar() {
       className="w-full flex justify-center fixed top-6 z-50"
     >
       <motion.div
-        className="w-fit flex items-center bg-white gap-10 sm:gap-16 md:gap-32 lg:gap-56 border px-6 py-3 rounded-full shadow-lg"
+        className="w-fit flex items-center bg-white dark:bg-slate-900 gap-10 sm:gap-16 md:gap-32 lg:gap-56 border px-6 py-3 rounded-full shadow-lg"
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
         <div className="font-funnel text-lg sm:text-xl">Crowdify</div>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
         <motion.button
           className="px-5 py-2 rounded-full text-white transition-all duration-300"
           initial={{ opacity: 0 }}
@@ -33,6 +35,7 @@ export default function Navbar() {
         >
           {session.data?.user ? "Logout" : "Signin"}
         </motion.button>
+        </div>
       </motion.div>
     </motion.div>
   );
