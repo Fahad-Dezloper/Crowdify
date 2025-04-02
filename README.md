@@ -22,26 +22,84 @@ Crowdify is a real-time music streaming platform where users can create rooms, i
 - **Authentication**: NextAuth / OAuth
 - **Streaming API**: YouTube API
 
-## Installation
+## Setup Instructions
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/yourusername/crowdify.git
-   cd crowdify
-   ```
+Follow these steps to set up the frontend for CROWDIFY.
 
-2. Install dependencies:
-   ```sh
-   pnpm install
-   ```
+### Step 1: Fork and Clone the Repository
+Fork the repository and then clone it to your local machine:
+```sh
+git clone https://github.com/Fahad-Dezloper/Crowdify
+cd crowdify
+```
 
-3. Set up environment variables in a `.env` file check `.env.example`:
+### Step 2: Install Dependencies
+Run the following command to install all necessary dependencies:
+```sh
+pnpm install
+```
 
+### Step 3: Update WebSocket Configuration
+Navigate to `WebContext.tsx` and modify the WebSocket configuration as follows:
 
-4. Start the development server:
-   ```sh
-   pnpm run dev
-   ```
+1. Comment out the existing WebSocket connection:
+```ts
+// const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
+```
+2. Uncomment the local WebSocket connection:
+```ts
+const ws = new WebSocket("ws://localhost:4000");
+```
+
+### Step 4: Configure Environment Variables
+Copy the example environment file and set up the necessary credentials:
+```sh
+cp .env.example .env
+```
+Then, update the `.env` file with your credentials:
+```ini
+# Google OAuth Credentials
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+
+# YouTube API Key for searching YouTube videos on the dashboard
+YOUTUBE_API_KEY=""
+
+# NextAuth Configuration
+NEXTAUTH_URL="http://localhost:3000/"
+NEXTAUTH_URL_INTERNAL="http://localhost:3000/"
+
+# Generate a secure NEXTAUTH_SECRET using:
+# openssl rand -base64 32
+NEXTAUTH_SECRET=""
+
+# Database Configuration
+DATABASE_URL=""
+```
+
+### Step 5: Run Prisma Migrations
+Apply database migrations using Prisma:
+```sh
+npx prisma migrate deploy
+```
+
+### Step 6: Generate Prisma Client
+Run the following command to generate the Prisma client:
+```sh
+npx prisma generate
+```
+
+### Step 7: Follow the steps to run the backend
+```sh
+https://github.com/Fahad-Dezloper/crowdify-backend
+```
+
+### Step 8: Start the Frontend
+Run the frontend development server:
+```sh
+pnpm run dev
+```
+Now, your frontend and backend should be up and running!
 
 ## Usage
 
