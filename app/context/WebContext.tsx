@@ -125,6 +125,8 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
                 break;
               default:
               console.log("Unknown Websocket event:", data);
+              setUsersCount(data.userCount);
+
             }
             // console.log("data rec for sending in ws: ", data);
             // console.log('message received');
