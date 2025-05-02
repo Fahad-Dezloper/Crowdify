@@ -81,8 +81,8 @@ export const WebSocketProvider:React.FC<{ children: React.ReactNode; roomId: str
         // }
         // console.log("we cam ehre to call", userId);
         // const ws = new WebSocket(process.env.WS_URL);
-        // const ws = new WebSocket("ws://localhost:4000");
-        const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
+        const ws = new WebSocket("ws://localhost:4000");
+        //const ws = new WebSocket("wss://crowdify-backend-production.up.railway.app");
 
         wsRef.current = ws;
 
