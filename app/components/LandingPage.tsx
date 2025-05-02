@@ -279,7 +279,7 @@ const LandingPage = () => {
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 className="px-6 py-3 md:px-8 md:py-4 bg-[#222222] text-white rounded-full font-funnel text-lg md:text-xl"
-                onClick={() => signIn("google")}
+                onClick={() => signIn()}
             >
                 Start Listening
             </motion.button>
