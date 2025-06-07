@@ -8,6 +8,7 @@ import { ChevronRight } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useWebSocket } from "../context/WebContext";
+import { toast } from "sonner";
 
 interface TopBarProps {
     userId: string;
@@ -20,7 +21,10 @@ const TopBar = ({ userId }: TopBarProps) => {
     function copyToClipboard() {
         const value = `http://crowdify-one.vercel.app/room/${userId}`;
         navigator.clipboard.writeText(value)
-            .then(() => console.log("Copied to clipboard:", value))
+            .then(() => {
+                console.log("Copied to clipboard:", value);
+                toast.success("Room link copied to clipboard!");
+            })
             .catch(err => console.error("Failed to copy:", err));
     }
 
